@@ -42,7 +42,7 @@ body{
   font-family:'Do Hyeon',sans-serif;
   font-weight:400;
   min-height:100vh;
-  -webkit-text-stroke: calc(1.5px * 18 / 44) var(--paper);
+  -webkit-text-stroke:0;
 }
 button,input,textarea{font-family:inherit;color:inherit}
 
@@ -62,23 +62,30 @@ button,input,textarea{font-family:inherit;color:inherit}
   border:1px solid var(--tab-border);
   border-bottom:none;
   border-radius:10px 10px 0 0;
-  color:#8a7a64;font-size:18px;letter-spacing:.01em;
+  color:#3a3026;font-size:18px;letter-spacing:.01em;font-weight:400;
   text-decoration:none;line-height:1;box-shadow:0 -1px 0 rgba(255,255,255,.35) inset;
+  -webkit-text-stroke:0;opacity:1;
+  -webkit-tap-highlight-color:transparent;
 }
+.tab:link, .tab:visited, .tab:hover, .tab:active, .tab:focus, .tab:focus-visible{
+  color:#3a3026;-webkit-text-stroke:0;opacity:1;text-decoration:none;
+}
+.tab:focus-visible{outline:2px solid #3a3026;outline-offset:1px}
+.tab:hover{color:#3a3026;filter:none}
 .tab.c2{background-color:var(--tab-c2)}
 .tab.c3{background-color:var(--tab-c3)}
 .tab.c4{background-color:var(--tab-c4)}
 .tab.c5{background-color:var(--tab-c5)}
 .tab.c6{background-color:var(--tab-c6)}
 .tab.on{
-  color:#3a3026;font-weight:700;
+  color:#3a3026;font-weight:700;-webkit-text-stroke:0;opacity:1;
   padding-top:10px;padding-bottom:11px;
   background:var(--paper-on) var(--paper-img) center/800px;
   border-color:var(--tab-on-border);
   box-shadow:0 -2px 0 rgba(255,248,230,.5) inset;
   position:relative;z-index:4;
 }
-body[data-view=search] .tab.on{color:#8a7a64;font-weight:400;padding-top:7px;padding-bottom:9px}
+body[data-view=search] .tab.on{color:#3a3026;font-weight:400;padding-top:7px;padding-bottom:9px}
 
 /* ===== notebook ===== */
 .notebook{
@@ -137,12 +144,12 @@ header{
 h1{
   margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
   font-size:40px;color:#3a3026;letter-spacing:.01em;line-height:1;
-  -webkit-text-stroke:0;
+  -webkit-text-stroke:0;cursor:pointer;
 }
 .header-right{display:flex;align-items:center;gap:14px}
 .search-wrap{display:flex;align-items:center;gap:8px}
 .search-wrap input{
-  width:0;opacity:0;border:none;border-bottom:1px solid #8a7a64;
+  width:0;opacity:0;border:none;border-bottom:1px solid #5a4e40;
   background:transparent;outline:none;font-size:18px;padding:0 0 2px;
   transition:.25s;
 }
@@ -156,8 +163,10 @@ body[data-view=search] .search-wrap input,
 
 /* ===== shared ===== */
 .view{display:none}
-body[data-view=today] #v-today,
-body[data-view=cal] #v-cal,
+body[data-view=today] #v-today-cal,
+body[data-view=today-cal] #v-today-cal,
+body[data-view=today-read] #v-today-read,
+body[data-view=today-edit] #v-today,
 body[data-view=pray] #v-pray,
 body[data-view=verse] #v-verse,
 body[data-view=bible] #v-bible,
@@ -185,10 +194,10 @@ body[data-view=picker-m] #v-today-a{display:block}
   -webkit-text-stroke:0;
 }
 .date-label{
-  font-weight:400;font-size:22px;color:#3a3026;-webkit-text-stroke:calc(1.5px * 22 / 44) var(--paper);
+  font-weight:400;font-size:22px;color:#3a3026;-webkit-text-stroke:0;
   letter-spacing:-.01em;white-space:nowrap;line-height:1;
 }
-.date-label em{font-style:normal;font-weight:400;font-size:16px;color:#7a6b58;margin-left:6px}
+.date-label em{font-style:normal;font-weight:400;font-size:16px;color:#5a4e40;margin-left:6px}
 .jump{
   border:1px solid var(--btn-border);background:rgba(255,255,255,.4);border-radius:16px;
   padding:2px 10px;font-size:14px;color:#5a4e40;cursor:pointer;
@@ -207,8 +216,8 @@ body[data-view=picker-m] #v-today-a{display:block}
 /* writing fields */
 .stack{display:flex;flex-direction:column;gap:18px;padding:2px 8px 8px 12px;max-width:880px}
 .sec-label{
-  margin:0 0 4px;font-size:13px;color:#8a7a64;letter-spacing:.02em;
-  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+  margin:0 0 4px;font-size:13px;color:#5a4e40;letter-spacing:.02em;
+  -webkit-text-stroke:0;
 }
 .ref-row{display:flex;align-items:flex-end;gap:10px}
 .ref-row .line{flex:1}
@@ -222,12 +231,12 @@ body[data-view=picker-m] #v-today-a{display:block}
   padding:0 4px 0 0;color:#3a3026;
 }
 .line{
-  font-size:18px;line-height:32px;height:32px;-webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+  font-size:18px;line-height:32px;height:32px;-webkit-text-stroke:0;
   background-image:linear-gradient(to bottom, transparent 31px, var(--rule) 31px, var(--rule) 32px);
   background-size:100% 32px;
 }
 .ruled{
-  font-size:18px;line-height:32px;-webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+  font-size:18px;line-height:32px;-webkit-text-stroke:0;
   background-image:repeating-linear-gradient(
     to bottom,
     transparent 0, transparent 31px,
@@ -237,7 +246,7 @@ body[data-view=picker-m] #v-today-a{display:block}
 }
 .ruled.verse{
   font-size:18px;line-height:32px;color:#2f281f;
-  -webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+  -webkit-text-stroke:0;
 }
 .ruled.sm{min-height:64px}
 .ruled.md{min-height:96px}
@@ -246,8 +255,8 @@ body[data-view=picker-m] #v-today-a{display:block}
 .month-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 4px 8px 8px}
 .m-dow{
   text-align:center;font-weight:400;
-  font-size:13px;color:#9a8a74;padding:2px 0 6px;letter-spacing:.04em;
-  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+  font-size:13px;color:#6b5c4c;padding:2px 0 6px;letter-spacing:.04em;
+  -webkit-text-stroke:0;
 }
 .m-dow.sun{color:#b07070}
 .mday{
@@ -258,7 +267,7 @@ body[data-view=picker-m] #v-today-a{display:block}
   padding:8px 4px 8px;position:relative;
 }
 .mday .num{
-  font-weight:400;font-size:15px;color:#5a4e40;line-height:1;-webkit-text-stroke:calc(1.5px * 15 / 44) var(--paper);
+  font-weight:400;font-size:15px;color:#5a4e40;line-height:1;-webkit-text-stroke:0;
 }
 .mday.sun .num{color:#a45c5c}
 .mday.today .num{
@@ -271,10 +280,10 @@ body[data-view=picker-m] #v-today-a{display:block}
   width:7px;height:7px;border-radius:50%;background:#a05645;margin-top:8px;opacity:.9;
 }
 .mday .ref{
-  margin-top:6px;font-size:12px;color:#6b5c4c;-webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  margin-top:6px;font-size:12px;color:#6b5c4c;-webkit-text-stroke:0;
   text-align:center;line-height:1.35;letter-spacing:-.02em;
 }
-.cal-note{margin:10px 8px 0;font-size:13px;color:#9a8a74}
+.cal-note{margin:10px 8px 0;font-size:13px;color:#6b5c4c}
 
 /* ===== lists / prayers / verses ===== */
 .sec-title{
@@ -289,14 +298,14 @@ body[data-view=picker-m] #v-today-a{display:block}
 }
 .ck{
   flex:0 0 18px;width:18px;height:18px;margin-top:3px;
-  border:1.5px solid #8a7a64;border-radius:3px;background:rgba(255,255,255,.35);
+  border:1.5px solid #5a4e40;border-radius:3px;background:rgba(255,255,255,.35);
   display:flex;align-items:center;justify-content:center;
   font-weight:400;font-size:15px;line-height:1;color:transparent;-webkit-text-stroke:0;
 }
 .ck.on{background:#3a3026;border-color:#3a3026;color:#f3e7cf;-webkit-text-stroke:0}
 .row .txt{flex:1;min-width:0;font-size:18px;line-height:1.35;padding-top:1px}
 .row.done .txt{color:#9a8d7c;text-decoration:line-through;text-decoration-color:rgba(154,141,124,.7)}
-.row .meta{flex:0 0 auto;font-size:14px;color:#9a8a74;padding-top:3px;white-space:nowrap}
+.row .meta{flex:0 0 auto;font-size:14px;color:#6b5c4c;padding-top:3px;white-space:nowrap}
 .add-bar{
   margin:8px 8px 18px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
   border-bottom:1px solid rgba(160,120,90,.4);padding:6px 4px 7px;
@@ -318,7 +327,7 @@ body[data-view=picker-m] #v-today-a{display:block}
 }
 .vcard .vtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
 .vcard .vref{font-size:18px;color:#3a3026}
-.vcard .vdate{font-size:13px;color:#9a8a74}
+.vcard .vdate{font-size:13px;color:#6b5c4c}
 .vcard .vtxt{font-size:17px;line-height:1.7;color:#2f281f}
 .vcard .star{font-size:18px;padding:0;color:#b08a4a}
 
@@ -331,7 +340,7 @@ body[data-view=picker-m] #v-today-a{display:block}
   padding:10px 4px;font-size:19px;cursor:pointer;
 }
 .book-h .nm{font-weight:700}
-.book-h .cnt{font-size:14px;color:#9a8a74}
+.book-h .cnt{font-size:14px;color:#6b5c4c}
 .book.open .book-h{color:#3a3026}
 .entries{display:none;padding:0 4px 10px 12px}
 .book.open .entries{display:block}
@@ -339,15 +348,15 @@ body[data-view=picker-m] #v-today-a{display:block}
   display:flex;align-items:baseline;gap:12px;padding:6px 0;
   border-top:1px dashed rgba(160,120,90,.3);font-size:16px;
 }
-.ent .dt{flex:0 0 72px;color:#8a7a64}
+.ent .dt{flex:0 0 72px;color:#5a4e40}
 .ent .rf{flex:0 0 130px;font-weight:700}
-.ent .sn{flex:1;font-size:15px;color:#6b5c4c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-text-stroke:calc(1.5px * 15 / 44) var(--paper)}
+.ent .sn{flex:1;font-size:15px;color:#6b5c4c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-text-stroke:0}
 
 /* 통독 */
 .prog-wrap{margin:4px 8px 18px;padding:0 4px}
 .prog-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
-.prog-top .big{font-size:24px;-webkit-text-stroke:calc(1.5px * 24 / 44) var(--paper)}
-.prog-top .sub{font-size:15px;color:#7a6b58}
+.prog-top .big{font-size:24px;-webkit-text-stroke:0}
+.prog-top .sub{font-size:15px;color:#5a4e40}
 .bar{height:7px;background:rgba(160,120,90,.22);border-radius:99px;overflow:hidden}
 .bar>i{display:block;height:100%;width:19.7%;background:#8a5a3a;border-radius:99px}
 .group-label{
@@ -364,7 +373,7 @@ body[data-view=picker-m] #v-today-a{display:block}
   padding:5px 2px;font-size:16px;color:#3a3026;min-width:0;
 }
 .bk .box{
-  flex:0 0 15px;width:15px;height:15px;border:1.4px solid #8a7a64;border-radius:3px;
+  flex:0 0 15px;width:15px;height:15px;border:1.4px solid #5a4e40;border-radius:3px;
   background:rgba(255,255,255,.35);
   display:flex;align-items:center;justify-content:center;
   font-size:12px;font-weight:700;line-height:1;color:transparent;
@@ -378,11 +387,11 @@ body[data-view=picker-m] #v-today-a{display:block}
 /* search */
 .search-head{padding:8px 8px 4px}
 .search-head .q{font-size:20px}
-.search-head .n{font-size:15px;color:#8a7a64;margin-left:8px}
+.search-head .n{font-size:15px;color:#5a4e40;margin-left:8px}
 .hit{padding:12px 8px;margin:0 8px;border-bottom:1px dashed rgba(160,120,90,.4);cursor:pointer}
 .hit .htop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
 .hit .href{font-weight:700;font-size:18px}
-.hit .hdate{font-size:14px;color:#9a8a74}
+.hit .hdate{font-size:14px;color:#6b5c4c}
 .hit .htxt{font-size:16px;line-height:1.6;color:#4a4034}
 .hit mark{background:transparent;color:#a05645;font-weight:700}
 
@@ -391,11 +400,11 @@ body[data-view=picker-m] #v-today-a{display:block}
   background:rgba(255,255,255,.3);
 }
 .seg button{
-  border:0;background:transparent;padding:3px 12px;font-size:15px;color:#7a6b58;cursor:pointer;
+  border:0;background:transparent;padding:3px 12px;font-size:15px;color:#5a4e40;cursor:pointer;
   border-right:1px solid #cbb89a;
 }
 .seg button:last-child{border-right:0}
-.seg button.on{background:#3a3026;color:#f3e7cf;-webkit-text-stroke:calc(1.5px * 15 / 44) #3a3026}
+.seg button.on{background:#3a3026;color:#f3e7cf;-webkit-text-stroke:0}
 
 @media(max-width:700px){
   .tabs{padding-left:34px;gap:3px;margin-left:2px}
@@ -431,7 +440,7 @@ body[data-view=picker-m] #v-today-a{display:block}
 }
 
 /* ===== richer today + verse picker ===== */
-.wx{display:flex;align-items:center;gap:8px;font-size:14px;color:#8a7a64}
+.wx{display:flex;align-items:center;gap:8px;font-size:14px;color:#5a4e40}
 .wx .wlab{margin-right:2px}
 .wx button{
   border:none;background:none;padding:0 2px;cursor:pointer;color:#b0a090;font-size:14px;
@@ -456,12 +465,12 @@ body[data-view=picker-m] #v-today-a{display:block}
   border-top:1px solid var(--header-line);border-bottom:1px solid var(--header-line);
 }
 .pv{display:flex;gap:10px;align-items:flex-start;padding:3px 4px;border-radius:3px}
-.pv .vn{flex:0 0 18px;font-size:13px;color:#9a8a74;padding-top:3px;text-align:right}
+.pv .vn{flex:0 0 18px;font-size:13px;color:#6b5c4c;padding-top:3px;text-align:right}
 .pv .vt{flex:1;font-size:17px;line-height:1.7;color:#2f281f}
 .pv.hi{background:rgba(176,138,74,.12)}
 .pv.hi .vt{color:#3a3026}
 .pv .star{font-size:16px;padding:2px 0 0;color:#b08a4a}
-.attr{margin:6px 4px 0;font-size:12px;color:#8a7a64;letter-spacing:.01em;-webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper)}
+.attr{margin:6px 4px 0;font-size:12px;color:#5a4e40;letter-spacing:.01em;-webkit-text-stroke:0}
 
 .qsec{margin-top:2px}
 .opt-row{
@@ -469,12 +478,12 @@ body[data-view=picker-m] #v-today-a{display:block}
   border-top:1px dashed rgba(160,120,90,.28);
 }
 .opt-link{
-  border:none;background:none;padding:0;font-size:14px;color:#9a8a74;cursor:pointer;
+  border:none;background:none;padding:0;font-size:14px;color:#6b5c4c;cursor:pointer;
 }
 
 .thanks{display:flex;flex-direction:column;gap:0;margin:0}
 .thanks .t-row{display:flex;align-items:flex-end;gap:8px}
-.thanks .n{flex:0 0 16px;font-size:14px;color:#9a8a74;padding-bottom:6px}
+.thanks .n{flex:0 0 16px;font-size:14px;color:#6b5c4c;padding-bottom:6px}
 .letter .line{font-size:18px}
 .photo-opt{
   margin-top:4px;border:1.4px dashed #d4cbb8;border-radius:8px;
@@ -502,7 +511,7 @@ body[data-view=picker] .pick-layer{
 }
 .pick-cols{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}
 .pick-col{min-width:0}
-.pick-col .lab{font-size:12px;color:#9a8a74;margin:0 0 6px}
+.pick-col .lab{font-size:12px;color:#6b5c4c;margin:0 0 6px}
 .books, .chs, .vs{display:flex;flex-wrap:wrap;gap:4px;max-height:220px;overflow:hidden}
 .chip{
   border:1px solid var(--tab-border);background:rgba(255,255,255,.4);
@@ -513,7 +522,7 @@ body[data-view=picker] .pick-layer{
 .pick-preview{margin-top:12px;padding-top:10px;border-top:1px solid var(--header-line);font-size:14px;color:#5a4e40;line-height:1.55}
 .pick-preview b{font-weight:400;color:#3a3026}
 .pick-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-.pick-foot .src{font-size:12px;color:#9a8a74}
+.pick-foot .src{font-size:12px;color:#6b5c4c}
 .pick-go{
   border:1px solid #3a3026;background:#3a3026;color:#f7f4ec;
   border-radius:16px;padding:4px 14px;font-size:15px;cursor:pointer;-webkit-text-stroke:0;
@@ -547,7 +556,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 
 
 .trow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.trow .lab{font-size:12px;color:#9a8a74;margin:0}
+.trow .lab{font-size:12px;color:#6b5c4c;margin:0}
 .tchip{
   border:1px solid var(--tab-border);background:rgba(255,255,255,.4);
   border-radius:16px;padding:3px 11px;font-size:14px;color:#5a4e40;cursor:pointer;
@@ -570,7 +579,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 .qt-book.ns{flex-wrap:wrap;align-items:flex-start;gap:8px 14px}
 .qt-book.ns .ns-meta{flex:1;min-width:0}
 .ns-title{margin:4px 0 0;font-size:20px;color:#3a3026;line-height:1.35}
-.ns-note{margin:6px 0 0;font-size:13px;color:#8a7a64;line-height:1.5;-webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper)}
+.ns-note{margin:6px 0 0;font-size:13px;color:#5a4e40;line-height:1.5;-webkit-text-stroke:0}
 .ns-link{
   border:1px solid #3a3026;background:#3a3026;color:#f7f4ec;
   border-radius:16px;padding:5px 14px;font-size:14px;cursor:pointer;
@@ -582,16 +591,16 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 }
 
 
-.sec-label .sec-n{display:inline-block;min-width:1.1em;margin-right:2px;color:#9a8a74}
+.sec-label .sec-n{display:inline-block;min-width:1.1em;margin-right:2px;color:#6b5c4c}
 .ex{
   display:inline-block;margin-left:8px;padding:0 7px 1px;
-  font-size:11px;color:#9a8a74;letter-spacing:.02em;
+  font-size:11px;color:#6b5c4c;letter-spacing:.02em;
   border:1px solid #d4cbb8;border-radius:8px;vertical-align:middle;
   -webkit-text-stroke:0;
 }
 .sec-label .ex{
   display:inline-block;margin-left:8px;padding:0 7px 1px;
-  font-size:11px;color:#9a8a74;letter-spacing:.02em;
+  font-size:11px;color:#6b5c4c;letter-spacing:.02em;
   border:1px solid #d4cbb8;border-radius:8px;vertical-align:middle;
   -webkit-text-stroke:0;
 }
@@ -603,7 +612,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   padding:0 8px 12px 8px;
 }
 .collect-filters .sec-label{margin:0 4px 0 0}
-.collect-note{margin:0 8px 12px;font-size:13px;color:#9a8a74;-webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper)}
+.collect-note{margin:0 8px 12px;font-size:13px;color:#6b5c4c;-webkit-text-stroke:0}
 .collect-note-mob{display:none}
 .collect-wrap{display:flex;align-items:stretch;gap:18px;padding:0 8px 16px 8px}
 .collect-cal{flex:1;min-width:0}
@@ -611,8 +620,8 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
 }
 .c-dow{
-  text-align:center;font-size:12px;color:#9a8a74;padding:0 0 6px;letter-spacing:.04em;
-  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  text-align:center;font-size:12px;color:#6b5c4c;padding:0 0 6px;letter-spacing:.04em;
+  -webkit-text-stroke:0;
 }
 .c-dow.sun{color:#b07070}
 .cday{
@@ -625,7 +634,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 .cday.mute .num{color:#c4b49a}
 .cday .num{
   font-size:13px;color:#5a4e40;line-height:1;
-  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+  -webkit-text-stroke:0;
 }
 .cday.sun .num{color:#a45c5c}
 .cday.today .num{
@@ -640,12 +649,12 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 }
 .cday .cref{
   margin-top:3px;font-size:12px;color:#5a4e40;line-height:1.3;letter-spacing:-.02em;
-  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  -webkit-text-stroke:0;
 }
 .cday .csnip{
   margin-top:2px;font-size:12px;color:#6b5c4c;line-height:1.35;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  -webkit-text-stroke:0;
   word-break:keep-all;
 }
 .collect-detail{
@@ -661,16 +670,16 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   margin:0 0 10px;padding-bottom:8px;
   border-bottom:1px solid var(--header-line);
 }
-.collect-detail .d-date{font-size:20px;color:#3a3026;margin:0;-webkit-text-stroke:calc(1.5px * 20 / 44) var(--paper)}
+.collect-detail .d-date{font-size:20px;color:#3a3026;margin:0;-webkit-text-stroke:0}
 .collect-detail .d-sec{margin:0 0 12px}
 .collect-detail .d-ref{font-size:17px;color:#3a3026;margin:0 0 4px}
 .collect-detail .d-verse{
   font-size:16px;line-height:1.65;color:#2f281f;margin:0 0 2px;
-  -webkit-text-stroke:calc(1.5px * 16 / 44) var(--paper);
+  -webkit-text-stroke:0;
 }
 .collect-detail .d-body{
   font-size:16px;line-height:1.65;color:#3a3026;margin:0;
-  -webkit-text-stroke:calc(1.5px * 16 / 44) var(--paper);
+  -webkit-text-stroke:0;
   word-break:keep-all;
 }
 .collect-detail .d-open{
@@ -714,16 +723,18 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .user-chip{display:flex;align-items:center;gap:8px}
 .btn-logout{
-  border:0;background:none;color:#8a7a64;font-size:13px;cursor:pointer;padding:0;
-  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+  border:0;background:none;color:#5a4e40;font-size:13px;cursor:pointer;padding:0;
+  -webkit-text-stroke:0;
 }
-.save-dot{font-size:12px;color:#9a8a74;margin-left:6px}
+.save-dot{font-size:12px;color:#6b5c4c;margin-left:6px}
 .pv{cursor:pointer}
 .pv:hover{background:rgba(176,138,74,.08)}
-.passage.empty{color:#9a8a74;padding:18px 8px;font-size:16px}
+.passage.empty{color:#6b5c4c;padding:18px 8px;font-size:16px}
 .pick-layer,.sheet-layer{z-index:20}
 body.pick-open .pick-layer{display:block}
-body.pick-open-m .sheet-layer{display:block}
+body.pick-open-m .sheet-layer{
+  display:block;position:fixed;left:0;right:0;bottom:0;top:auto;z-index:22;
+}
 .pick-layer{display:none;position:absolute;inset:0;background:rgba(90,70,45,.12);border-radius:0 10px 10px 0}
 .pick-card{position:absolute;width:540px;max-width:calc(100% - 32px);z-index:21}
 body.pick-open-m .pick-layer{display:none}
@@ -733,7 +744,7 @@ body.pick-open-m .pick-layer{display:none}
 }
 .pray-item .p-main{flex:1;min-width:0}
 .pray-item .p-text{font-size:17px;line-height:1.5;color:#3a3026}
-.pray-item .p-meta{font-size:13px;color:#9a8a74;margin-top:2px}
+.pray-item .p-meta{font-size:13px;color:#6b5c4c;margin-top:2px}
 .pray-item.answered .p-text{color:#6b5c4c}
 .pray-actions{display:flex;gap:6px;flex:0 0 auto}
 .tiny{
@@ -749,44 +760,94 @@ body.pick-open-m .pick-layer{display:none}
 }
 .ch-grid button.on{background:#3a3026;color:#f7f4ec;border-color:#3a3026;-webkit-text-stroke:0}
 .book-h .cnt.done{color:#3a3026}
-.empty-msg{padding:24px 12px;color:#9a8a74;font-size:16px}
+.empty-msg{padding:24px 12px;color:#6b5c4c;font-size:16px}
 #bibleLoad{
-  padding:6px 12px;margin:0 8px 8px;font-size:13px;color:#8a7a64;
+  padding:6px 12px;margin:0 8px 8px;font-size:13px;color:#5a4e40;
 }
 .d-open{cursor:pointer}
 .cday.has{cursor:pointer}
 .cday{cursor:default}
-.collect-detail.empty-detail .d-body{color:#9a8a74}
+.collect-detail.empty-detail .d-body{color:#6b5c4c}
 .attr.hidden,.passage.hidden{display:none}
 @media(max-width:700px){
   .user-chip .btn-login{max-width:42vw;overflow:hidden;text-overflow:ellipsis}
 }
 .pick-card{background:var(--paper-on) var(--paper-img) center/800px;border:1px solid var(--paper-border);border-radius:10px;box-shadow:0 8px 24px rgba(70,50,25,.16);padding:14px 16px 16px}
-.pick-books{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.pick-books{max-height:220px;overflow:auto;display:block;padding-right:2px;-webkit-overflow-scrolling:touch}
 .pick-chs,.pick-vs{max-height:220px;overflow:auto;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
-.pick-books .chip{text-align:left;width:100%}
-.pick-sheet .pick-books{max-height:88px;flex-direction:row;flex-wrap:wrap}
+.pick-group{margin:0 0 8px}
+.pick-group:last-child{margin-bottom:0}
+.pick-group-label{
+  margin:0 0 4px;font-size:12px;color:#6b5c4c;letter-spacing:.02em;
+  -webkit-text-stroke:0;
+}
+.pick-book-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:3px}
+.pick-books .chip{
+  text-align:left;width:100%;font-size:13px;padding:3px 8px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.pick-sheet .pick-books{max-height:88px}
+.pick-sheet .pick-book-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
 .pick-sheet .pick-chs,.pick-sheet .pick-vs{max-height:120px}
+@media(max-width:700px){
+  .pick-sheet .pick-book-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
 
 body.pick-open .page, body.pick-open-m .page{overflow:visible}
 textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{color:#b5a894;opacity:1}
+
+.btn-write{
+  border:1px solid #3a3026;background:#3a3026;color:#f7f4ec;
+  border-radius:18px;padding:7px 18px;font-size:16px;cursor:pointer;
+  -webkit-text-stroke:0;white-space:nowrap;letter-spacing:.01em;
+}
+.btn-write:hover{background:#2a221c}
+.btn-write.ghost{
+  background:rgba(255,255,255,.4);color:#3a3026;border-color:var(--btn-border);
+  -webkit-text-stroke:0;
+}
+.back-cal{
+  border:0;background:none;color:#5a4e40;font-size:16px;cursor:pointer;
+  padding:0 4px 0 0;white-space:nowrap;
+}
+.today-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:0 8px 14px 8px}
+.day-read .stack{max-width:880px}
+.day-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 8px}
+.day-mood{font-size:14px;color:#5a4e40}
+.day-empty{padding:36px 12px 16px;text-align:center}
+.day-empty p{margin:0 0 16px;font-size:17px;color:#6b5c4c}
+@media(max-width:700px){
+  .today-actions{padding:0 4px 12px 4px}
+  .btn-write{width:100%;text-align:center;padding:8px 14px}
+}
+
+
+.btn-add-pass, .pass-edit, .pass-del{
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.45);
+  border-radius:16px;padding:4px 12px;font-size:14px;color:#3a3026;cursor:pointer;
+  -webkit-text-stroke:0;
+}
+.btn-add-pass{border-style:dashed;padding:5px 14px;font-size:15px;margin:6px 0 8px}
+.pass-block{margin:0 0 16px}
+.pass-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 4px;padding-left:4px}
+.pass-ref{flex:1;min-width:120px;font-size:18px;color:#3a3026;cursor:pointer;line-height:32px}
+.pick-chs .chip, .pick-vs .chip, .pick-books .chip{user-select:none;-webkit-user-select:none}
 </style>
 </head>
 <body data-view="today">
 <div class="frame">
   <nav class="tabs" aria-label="탭">
     <a class="tab c1 on" data-tab="today" href="#today">오늘 묵상</a>
-    <a class="tab c2" data-tab="cal" href="#cal">달력</a>
-    <a class="tab c6" data-tab="collect" href="#collect">모아보기</a>
     <a class="tab c3" data-tab="pray" href="#pray">기도</a>
     <a class="tab c4" data-tab="verse" href="#verse">구절</a>
     <a class="tab c5" data-tab="bible" href="#bible">성경</a>
+    <a class="tab c6" data-tab="collect" href="#collect">모아보기</a>
   </nav>
   <div class="notebook">
     <aside class="bind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></aside>
     <div class="page">
       <header>
-        <h1>dailybread</h1>
+        <h1 id="logoBtn" title="오늘 묵상 달력">dailybread</h1>
         <div class="header-right">
           <div class="search-wrap">
             <input id="searchBox" value="" placeholder="책 이름, 단어" aria-label="검색">
@@ -805,6 +866,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
       <div class="view" id="v-today">
         <div class="toolbar">
           <div class="date-nav">
+            <button class="back-cal" type="button" id="editBackCal">‹ 달력</button>
             <button class="nav-btn" type="button" id="prevDay" aria-label="이전 날">‹</button>
             <div class="date-label" id="todayLabel">—</div>
             <button class="nav-btn" type="button" id="nextDay" aria-label="다음 날">›</button>
@@ -827,19 +889,18 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
             <div class="ref-tools">
               <div>
                 <p class="sec-label">본문</p>
-                <div class="line" id="refLine" style="cursor:pointer">본문을 골라 주세요</div>
               </div>
               <span class="tchip on" id="chipKrv" role="button" tabindex="0">개역한글</span>
               <span class="tchip" id="chipKjv" role="button" tabindex="0">KJV</span>
-              <button type="button" class="pick-btn" id="pickBtn">본문 고르기</button>
             </div>
             <div id="bibleLoad" hidden>성경 글을 불러오는 중이에요…</div>
-            <div class="passage empty" id="passage">본문 고르기를 누르면 성경 글이 여기에 나타나요.</div>
+            <div id="passageBlocks"></div>
+            <button type="button" class="btn-add-pass" id="btnAddPassage">+ 본문 추가</button>
             <p class="attr hidden" id="attrLine">성경전서 개역한글판, 대한성서공회 1961</p>
           </section>
           <section>
-            <p class="sec-label">마음에 남는 한 구절</p>
-            <div id="highlightBox" class="passage empty" style="border:none;padding:4px 0">본문에서 구절을 누르면 여기에 담겨요.</div>
+            <p class="sec-label">마음에 남는 구절</p>
+            <div id="highlightBox" class="passage empty" style="border:none;padding:4px 0">본문에서 구절을 누르면 여러 개를 담을 수 있어요.</div>
           </section>
           <section>
             <p class="sec-label"><span class="sec-n">1.</span> 오늘 본문의 내용</p>
@@ -876,18 +937,37 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
         </div>
       </div>
 
-      <!-- CALENDAR -->
-      <div class="view" id="v-cal">
+      <!-- TODAY CALENDAR (default 오늘 묵상) -->
+      <div class="view" id="v-today-cal">
         <div class="toolbar">
           <div class="date-nav">
             <button class="nav-btn" type="button" id="calPrev" aria-label="이전 달">‹</button>
             <div class="date-label" id="calLabel">2026년 11월</div>
             <button class="nav-btn" type="button" id="calNext" aria-label="다음 달">›</button>
+            <button class="jump" type="button" id="calJumpToday">오늘</button>
           </div>
           <div class="streak" id="calStreak"></div>
         </div>
+        <div class="today-actions">
+          <button type="button" class="btn-write" id="btnWriteToday">오늘 묵상 기록하기</button>
+          <span class="ex" id="calExampleBadge">예시</span>
+        </div>
         <div class="month-cal" id="calGrid"></div>
-        <p class="cal-note">점이 있는 날을 누르면 그날 묵상이 열려요.</p>
+        <p class="cal-note">기록이 있는 날을 누르면 그날 묵상이 열려요. 아직 없는 날을 누르면 그날을 새로 적을 수 있어요.</p>
+      </div>
+
+      <!-- TODAY READ (tapped date) -->
+      <div class="view" id="v-today-read">
+        <div class="toolbar">
+          <div class="date-nav">
+            <button class="back-cal" type="button" id="readBackCal">‹ 달력</button>
+            <button class="nav-btn" type="button" id="readPrev" aria-label="이전 날">‹</button>
+            <div class="date-label" id="readLabel">—</div>
+            <button class="nav-btn" type="button" id="readNext" aria-label="다음 날">›</button>
+            <span class="ex" id="readExampleBadge">예시</span>
+          </div>
+        </div>
+        <div class="stack day-read" id="readBody"></div>
       </div>
 
       <!-- COLLECT -->
@@ -969,18 +1049,18 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
     <div class="pick-layer" id="pickLayer" hidden>
       <div class="pick-card" id="pickCard">
         <h3 style="margin:0 0 8px;font-size:16px;font-weight:400">본문 고르기</h3>
-        <div class="pick-cols" style="display:grid;grid-template-columns:1.2fr .7fr .9fr;gap:10px">
+        <div class="pick-cols" style="display:grid;grid-template-columns:1.45fr .65fr .8fr;gap:10px">
           <div>
             <p class="sec-label">책</p>
-            <div class="books" id="pickBooks" class="pick-books"></div>
+            <div class="pick-books" id="pickBooks"></div>
           </div>
           <div>
             <p class="sec-label">장</p>
-            <div class="chs" id="pickChs" class="pick-chs"></div>
+            <div class="pick-chs" id="pickChs"></div>
           </div>
           <div>
             <p class="sec-label">절</p>
-            <div class="vs" id="pickVs" class="pick-vs"></div>
+            <div class="pick-vs" id="pickVs"></div>
           </div>
         </div>
         <div class="pick-preview" id="pickPreview"></div>
@@ -1000,15 +1080,15 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
     <div class="pick-cols">
       <div>
         <p class="sec-label">책</p>
-        <div class="books" id="pickBooksM" class="pick-books"></div>
+        <div class="pick-books" id="pickBooksM"></div>
       </div>
       <div>
         <p class="sec-label">장</p>
-        <div class="chs" id="pickChsM" class="pick-chs"></div>
+        <div class="pick-chs" id="pickChsM"></div>
       </div>
       <div>
         <p class="sec-label">절</p>
-        <div class="vs" id="pickVsM" class="pick-vs"></div>
+        <div class="pick-vs" id="pickVsM"></div>
       </div>
     </div>
     <div class="pick-preview" id="pickPreviewM"></div>
@@ -1077,6 +1157,7 @@ function uidId() { return Date.now().toString(36) + Math.random().toString(36).s
 
 function emptyEntry() {
   return {
+    passages: [], highlights: [],
     book: null, chapter: null, verseStart: null, verseEnd: null,
     showKrv: true, showKjv: false, highlight: null,
     summary: "", notes: "", whoGod: "", feeling: "", apply: "",
@@ -1087,7 +1168,7 @@ function emptyData() { return { entries: {}, prayers: [], verses: [], reading: {
 
 function entryHasContent(e) {
   if (!e) return false;
-  if (e.book) return true;
+  if (entryPassages(e).length || e.book) return true;
   if ((e.summary||"").trim() || (e.notes||"").trim() || (e.whoGod||"").trim() ||
       (e.feeling||"").trim() || (e.apply||"").trim() || (e.prayer||"").trim()) return true;
   if ((e.thanks||[]).some(t => (t||"").trim())) return true;
@@ -1144,6 +1225,98 @@ function formatRefShort(nr, ch, a, b) {
   if (a === b) return `${ab} ${ch}:${a}`;
   return `${ab} ${ch}:${a}-${b}`;
 }
+function formatVerseNums(verses) {
+  if (!verses || !verses.length) return "";
+  const vs = [...new Set(verses.map(Number))].filter(v => v>0).sort((a,b)=>a-b);
+  const parts = [];
+  let a = vs[0], b = vs[0];
+  for (let i=1;i<=vs.length;i++) {
+    if (i<vs.length && vs[i]===b+1) { b=vs[i]; continue; }
+    parts.push(a===b ? String(a) : `${a}-${b}`);
+    if (i<vs.length) { a=b=vs[i]; }
+  }
+  return parts.join(",");
+}
+function formatPassageRef(p, short) {
+  if (!p || !p.book) return "";
+  const name = short ? bookAbbrev(p.book) : (bookName(p.book) || bookAbbrev(p.book));
+  if (!name) return "";
+  return `${name} ${p.chapter}:${formatVerseNums(p.verses||[])}`;
+}
+function formatEntryRefs(e, short) {
+  return entryPassages(e).map(p => formatPassageRef(p, short)).filter(Boolean).join(" · ");
+}
+function versesFromRange(a, b) {
+  const vs = [];
+  if (a==null || a==="") return vs;
+  const start = Math.min(+a, +(b==null||b===""?a:b));
+  const end = Math.max(+a, +(b==null||b===""?a:b));
+  for (let v=start; v<=end; v++) vs.push(v);
+  return vs;
+}
+function normalizePassage(p) {
+  if (!p || !p.book) return null;
+  let verses = Array.isArray(p.verses) ? p.verses.map(Number)
+             : versesFromRange(p.verseStart ?? p.start, p.verseEnd ?? p.end);
+  verses = [...new Set(verses)].filter(v => v>0).sort((a,b)=>a-b);
+  if (!verses.length) return null;
+  return { book:+p.book, chapter:+p.chapter, verses };
+}
+function entryPassages(e) {
+  if (!e) return [];
+  if (Array.isArray(e.passages) && e.passages.length)
+    return e.passages.map(normalizePassage).filter(Boolean);
+  if (e.book) {
+    const p = normalizePassage({ book:e.book, chapter:e.chapter, verseStart:e.verseStart, verseEnd:e.verseEnd, verses:e.verses });
+    return p ? [p] : [];
+  }
+  return [];
+}
+function entryHighlights(e) {
+  if (!e) return [];
+  if (Array.isArray(e.highlights) && e.highlights.length) {
+    return e.highlights.map(h => {
+      if (typeof h === "number") {
+        const p = entryPassages(e)[0];
+        return p ? { book:p.book, chapter:p.chapter, verse:+h } : null;
+      }
+      if (h && h.verse) return { book:+(h.book || (e.book||0)), chapter:+(h.chapter || (e.chapter||0)), verse:+h.verse };
+      return null;
+    }).filter(Boolean);
+  }
+  if (e.highlight && (e.book || entryPassages(e)[0])) {
+    const p = entryPassages(e)[0];
+    const book = e.book || (p && p.book);
+    const chapter = e.chapter || (p && p.chapter);
+    if (book) return [{ book:+book, chapter:+chapter, verse:+e.highlight }];
+  }
+  return [];
+}
+function isHighlighted(e, book, ch, v) {
+  return entryHighlights(e).some(h => h.book===book && h.chapter===ch && h.verse===v);
+}
+function syncLegacyFields(e) {
+  const ps = entryPassages(e);
+  e.passages = ps;
+  const hs = entryHighlights(e).filter(h =>
+    ps.some(p => p.book===h.book && p.chapter===h.chapter && p.verses.includes(h.verse))
+  );
+  e.highlights = hs;
+  const p = ps[0];
+  if (p) {
+    e.book = p.book; e.chapter = p.chapter;
+    e.verseStart = p.verses[0];
+    e.verseEnd = p.verses[p.verses.length-1];
+  } else {
+    e.book = e.chapter = e.verseStart = e.verseEnd = null;
+  }
+  e.highlight = hs[0] ? hs[0].verse : null;
+  return e;
+}
+function migrateEntry(raw) {
+  const e = { ...emptyEntry(), ...(raw||{}), thanks: [...((raw && raw.thanks) || ["","",""])] };
+  return syncLegacyFields(e);
+}
 
 /* ===== state ===== */
 let view = "today";
@@ -1162,7 +1335,7 @@ let applyingCloud = false;
 let saveTimer = null;
 let cloudTimer = null;
 let dirty = false;
-let picker = { book: 19, chapter: 23, start: 1, end: 6, picking: "start" };
+let picker = { book: 19, chapter: 23, verses: [], anchor: null, editIndex: null };
 
 function loadLocal() {
   try {
@@ -1180,14 +1353,15 @@ function saveLocal() {
   try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {}
 }
 function getEntry(iso) {
-  return data.entries[iso] ? { ...emptyEntry(), ...data.entries[iso], thanks: [...(data.entries[iso].thanks || ["","",""])] } : emptyEntry();
+  return data.entries[iso] ? migrateEntry(data.entries[iso]) : emptyEntry();
 }
 function putEntry(iso, entry) {
-  if (!entryHasContent(entry)) {
+  const e = migrateEntry(entry);
+  if (!entryHasContent(e)) {
     delete data.entries[iso];
   } else {
-    entry.updatedAt = new Date().toISOString();
-    data.entries[iso] = entry;
+    e.updatedAt = new Date().toISOString();
+    data.entries[iso] = e;
   }
   saveLocal();
   scheduleCloud();
@@ -1400,7 +1574,6 @@ function fillTodayForm() {
   const e = currentEntry();
   $("todayLabel").innerHTML = dateLabel(currentDate);
   qsa("#moodRow [data-mood]").forEach(b => b.classList.toggle("on", b.dataset.mood === (e.mood || "맑음")));
-  $("refLine").textContent = e.book ? formatRef(e.book, e.chapter, e.verseStart, e.verseEnd) : "본문을 골라 주세요";
   $("chipKrv").classList.toggle("on", e.showKrv !== false);
   $("chipKjv").classList.toggle("on", !!e.showKjv);
   $("f-summary").value = e.summary || "";
@@ -1447,15 +1620,12 @@ function renderStreak() {
 
 async function renderPassage() {
   const e = currentEntry();
-  const box = $("passage"), attr = $("attrLine"), load = $("bibleLoad");
-  if (!e.book) {
-    box.className = "passage empty";
-    box.textContent = "본문 고르기를 누르면 성경 글이 여기에 나타나요.";
+  const box = $("passageBlocks"), attr = $("attrLine"), load = $("bibleLoad");
+  const ps = entryPassages(e);
+  if (!ps.length) {
+    box.innerHTML = `<div class="passage empty">아래 ‘+ 본문 추가’를 누르면 성경 글이 여기에 나타나요.</div>`;
     attr.classList.add("hidden");
-    $("highlightBox").className = "passage empty";
-    $("highlightBox").style.border = "none";
-    $("highlightBox").style.padding = "4px 0";
-    $("highlightBox").textContent = "본문에서 구절을 누르면 여기에 담겨요.";
+    renderHighlight();
     return;
   }
   const needKrv = e.showKrv !== false;
@@ -1466,30 +1636,22 @@ async function renderPassage() {
     if (needKjv) await loadBible("kjv");
   } catch (err) {
     load.hidden = true;
-    box.className = "passage empty";
-    box.textContent = "성경 글을 불러오지 못했어요. 파일을 함께 올렸는지 확인해 주세요.";
+    box.innerHTML = `<div class="passage empty">성경 글을 불러오지 못했어요. 파일을 함께 올렸는지 확인해 주세요.</div>`;
     return;
   }
   load.hidden = true;
-  const nums = [];
-  for (let v = e.verseStart; v <= e.verseEnd; v++) nums.push(v);
   const both = needKrv && needKjv;
-  const rows = nums.map(v => {
-    const ko = needKrv ? verseText("krv", e.book, e.chapter, v) : "";
-    const en = needKjv ? verseText("kjv", e.book, e.chapter, v) : "";
-    if (!ko && !en) return "";
-    const hi = e.highlight === v ? " hi" : "";
-    const starred = isStarred(e.book, e.chapter, v);
-    let body;
-    if (both) {
-      body = `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`;
-    } else {
-      body = `<span class="vt">${esc(ko || en)}</span>`;
-    }
-    return `<div class="pv${hi}" data-verse="${v}"><span class="vn">${v}</span>${body}<span class="star${starred?" on":""}" data-star="${v}" title="구절 모음에 담기">★</span></div>`;
+  box.innerHTML = ps.map((p, pi) => {
+    const rows = p.verses.map(v => verseRowHtml(e, p.book, p.chapter, v, needKrv, needKjv, both, true)).join("");
+    return `<div class="pass-block" data-pi="${pi}">
+      <div class="pass-head">
+        <div class="line pass-ref" data-edit="${pi}">${esc(formatPassageRef(p))}</div>
+        <button type="button" class="pass-edit" data-edit="${pi}">바꾸기</button>
+        <button type="button" class="pass-del" data-del="${pi}">삭제</button>
+      </div>
+      <div class="passage">${rows || `<div class="passage empty">이 범위에 해당하는 구절을 찾지 못했어요.</div>`}</div>
+    </div>`;
   }).join("");
-  box.className = "passage";
-  box.innerHTML = rows || `<div class="passage empty">이 범위에 해당하는 구절을 찾지 못했어요.</div>`;
   const parts = [];
   if (needKrv) parts.push("성경전서 개역한글판, 대한성서공회 1961");
   if (needKjv) parts.push("King James Version");
@@ -1497,28 +1659,40 @@ async function renderPassage() {
   attr.classList.toggle("hidden", !parts.length);
   renderHighlight();
 }
+function verseRowHtml(e, book, ch, v, needKrv, needKjv, both, withStar) {
+  const ko = needKrv ? verseText("krv", book, ch, v) : "";
+  const en = needKjv ? verseText("kjv", book, ch, v) : "";
+  if (!ko && !en) return "";
+  const hi = isHighlighted(e, book, ch, v) ? " hi" : "";
+  const starred = isStarred(book, ch, v);
+  const body = both
+    ? `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`
+    : `<span class="vt">${esc(ko || en)}</span>`;
+  const star = withStar ? `<span class="star${starred?" on":""}" data-star="${v}" data-book="${book}" data-chapter="${ch}" title="구절 모음에 담기">★</span>` : "";
+  return `<div class="pv${hi}" data-verse="${v}" data-book="${book}" data-chapter="${ch}"><span class="vn">${v}</span>${body}${star}</div>`;
+}
 function renderHighlight() {
   const e = currentEntry();
   const box = $("highlightBox");
-  if (!e.book || !e.highlight) {
+  const hs = entryHighlights(e);
+  if (!hs.length) {
     box.className = "passage empty";
     box.style.border = "none";
     box.style.padding = "4px 0";
-    box.textContent = "본문에서 구절을 누르면 여기에 담겨요.";
+    box.textContent = "본문에서 구절을 누르면 여러 개를 담을 수 있어요.";
     return;
   }
-  const v = e.highlight;
-  const ko = e.showKrv !== false ? verseText("krv", e.book, e.chapter, v) : "";
-  const en = e.showKjv ? verseText("kjv", e.book, e.chapter, v) : "";
-  const starred = isStarred(e.book, e.chapter, v);
-  const body = (e.showKrv !== false && e.showKjv)
-    ? `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`
-    : `<span class="vt">${esc(ko || en)}</span>`;
-  box.className = "";
-  box.style.border = "none";
-  box.style.padding = "0";
-  box.innerHTML = `<div class="pv hi" style="padding:8px 6px" data-verse="${v}"><span class="vn">${v}</span>${body}<span class="star${starred?" on":""}" data-star="${v}">★</span></div>`;
+  const needKrv = e.showKrv !== false, needKjv = !!e.showKjv, both = needKrv && needKjv;
+  box.className = "passage";
+  box.style.border = "";
+  box.style.padding = "";
+  box.innerHTML = hs.map(h => {
+    const row = verseRowHtml(e, h.book, h.chapter, h.verse, needKrv, needKjv, both, true);
+    const ref = formatPassageRef({ book:h.book, chapter:h.chapter, verses:[h.verse] });
+    return `<p class="sec-label" style="margin:6px 0 0">${esc(ref)}</p>${row}`;
+  }).join("");
 }
+
 function esc(s) {
   return String(s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 }
@@ -1555,12 +1729,13 @@ function renderCalendar() {
   for (let i=0;i<firstDow;i++) html += `<div class="mday mute"></div>`;
   for (let d=1; d<=n; d++) {
     const iso = `${calYear}-${String(calMonth).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const e = data.entries[iso];
+    const e = getEntry(iso);
     const has = entryHasContent(e);
     const dow = (firstDow + d - 1) % 7;
     const cls = ["mday", dow===0?"sun":"", iso===today?"today":"", has?"has":""].filter(Boolean).join(" ");
     let mark = "";
-    if (has && e.book) mark = `<span class="mark"></span><span class="ref">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span>`;
+    const refs = formatEntryRefs(e, true);
+    if (has && refs) mark = `<span class="mark"></span><span class="ref">${esc(refs)}</span>`;
     else if (has) mark = `<span class="mark"></span>`;
     html += `<div class="${cls}" data-iso="${iso}"><span class="num">${d}</span>${mark}</div>`;
   }
@@ -1585,14 +1760,15 @@ function renderCollect() {
   for (let i=0;i<firstDow;i++) html += `<div class="cday mute"></div>`;
   for (let d=1; d<=n; d++) {
     const iso = `${colYear}-${String(colMonth).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-    const e = data.entries[iso];
+    const e = getEntry(iso);
     const has = entryHasContent(e);
     if (has) count++;
     const dow = (firstDow + d - 1) % 7;
-    const sel = collectSel === iso || (!collectSel && has && iso === (data.entries[today] ? today : collectSel));
+    const sel = collectSel === iso || (!collectSel && has && iso === (entryHasContent(getEntry(today)) ? today : collectSel));
     const cls = ["cday", dow===0?"sun":"", iso===today?"today":"", has?"has":"", iso===collectSel?"sel":""].filter(Boolean).join(" ");
     let extra = "";
-    if (has && e.book) extra += `<span class="cref">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span>`;
+    const refs = formatEntryRefs(e, true);
+    if (has && refs) extra += `<span class="cref">${esc(refs)}</span>`;
     if (has && collectFilter !== "ref") {
       const sn = snippetOf(e, collectFilter);
       if (sn) extra += `<span class="csnip">${esc(sn)}</span>`;
@@ -1618,21 +1794,26 @@ function renderCollect() {
 function renderCollectDetail() {
   const iso = collectSel;
   const box = $("colDetail");
-  const e = iso ? data.entries[iso] : null;
+  const e = iso ? getEntry(iso) : null;
   if (!iso || !entryHasContent(e)) {
     box.className = "collect-detail empty-detail";
     const { m,d,dow } = iso ? parseISO(iso) : parseISO(todayISO());
-    box.innerHTML = `<div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#7a6b58">${DOW[dow]}요일</em></p></div>
+    box.innerHTML = `<div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#5a4e40">${DOW[dow]}요일</em></p></div>
       <p class="d-body">아직 기록이 없어요.</p>`;
     return;
   }
   const { m,d,dow } = parseISO(iso);
-  const ref = e.book ? formatRef(e.book, e.chapter, e.verseStart, e.verseEnd) : "";
-  const verse = (e.book && e.highlight) ? (verseText("krv", e.book, e.chapter, e.highlight) || verseText("kjv", e.book, e.chapter, e.highlight)) : (e.book ? verseText("krv", e.book, e.chapter, e.verseStart) : "");
+  const ref = formatEntryRefs(e) || "";
+  const ps = entryPassages(e);
+  const verseHtml = ps.map(p => {
+    const first = p.verses[0];
+    const text = verseText("krv", p.book, p.chapter, first) || verseText("kjv", p.book, p.chapter, first) || "";
+    return `<p class="d-ref">${esc(formatPassageRef(p))}</p>${text?`<p class="d-verse">${esc(text)}</p>`:""}`;
+  }).join("");
   box.className = "collect-detail";
   box.innerHTML = `
-    <div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#7a6b58">${DOW[dow]}요일</em></p></div>
-    <div class="d-sec"><p class="sec-label">본문</p><p class="d-ref">${esc(ref) || "본문 없음"}</p>${verse?`<p class="d-verse">${esc(verse)}</p>`:""}</div>
+    <div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#5a4e40">${DOW[dow]}요일</em></p></div>
+    <div class="d-sec"><p class="sec-label">본문</p>${verseHtml || `<p class="d-ref">본문 없음</p>`}</div>
     <div class="d-sec"><p class="sec-label">느낀 점</p><p class="d-body">${esc((e.feeling||"").trim()) || "아직 적지 않았어요."}</p></div>
     <div class="d-sec"><p class="sec-label">적용점</p><p class="d-body">${esc((e.apply||"").trim()) || "아직 적지 않았어요."}</p></div>
     <div class="d-sec"><p class="sec-label">기도</p><p class="d-body">${esc((e.prayer||"").trim()) || "아직 적지 않았어요."}</p></div>
@@ -1689,10 +1870,13 @@ function renderBible() {
 }
 function renderByBook() {
   const groups = new Map();
-  Object.entries(data.entries).forEach(([iso,e]) => {
-    if (!entryHasContent(e) || !e.book) return;
-    if (!groups.has(e.book)) groups.set(e.book, []);
-    groups.get(e.book).push({ iso, e });
+  Object.entries(data.entries).forEach(([iso,raw]) => {
+    const e = migrateEntry(raw);
+    if (!entryHasContent(e)) return;
+    entryPassages(e).forEach(pass => {
+      if (!groups.has(pass.book)) groups.set(pass.book, []);
+      groups.get(pass.book).push({ iso, e, pass });
+    });
   });
   if (!groups.size) {
     $("bibleByBook").innerHTML = `<p class="empty-msg">본문을 고르고 묵상을 적으면 책별로 모여요.</p>`;
@@ -1702,9 +1886,9 @@ function renderByBook() {
   $("bibleByBook").innerHTML = nrs.map(nr => {
     const list = groups.get(nr).sort((a,b)=>b.iso.localeCompare(a.iso));
     const name = bookName(nr);
-    const entries = list.map(({iso,e}) => {
+    const entries = list.map(({iso,e,pass}) => {
       const { m,d } = parseISO(iso);
-      return `<div class="ent" data-iso="${iso}"><span class="dt">${m}월 ${d}일</span><span class="rf">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span><span class="sn">${esc((e.feeling||e.summary||"").trim())}</span></div>`;
+      return `<div class="ent" data-iso="${iso}"><span class="dt">${m}월 ${d}일</span><span class="rf">${esc(formatPassageRef(pass, true))}</span><span class="sn">${esc((e.feeling||e.summary||"").trim())}</span></div>`;
     }).join("");
     return `<div class="book open"><div class="book-h"><span class="nm">${esc(name)}</span><span class="cnt">${list.length}일</span></div><div class="entries">${entries}</div></div>`;
   }).join("");
@@ -1753,8 +1937,9 @@ function renderSearch(q) {
     const match = (s) => (s||"").toLowerCase().includes(qlow) || (s||"").includes(query);
     Object.entries(data.entries).forEach(([iso,e]) => {
       if (!entryHasContent(e)) return;
-      const ref = e.book ? formatRef(e.book,e.chapter,e.verseStart,e.verseEnd) : "";
-      const fields = [ref, e.summary, e.notes, e.whoGod, e.feeling, e.apply, e.prayer, ...(e.thanks||[])];
+      const e2 = migrateEntry(e);
+      const ref = formatEntryRefs(e2) || "";
+      const fields = [ref, e2.summary, e2.notes, e2.whoGod, e2.feeling, e2.apply, e2.prayer, ...(e2.thanks||[])];
       const hit = fields.find(f => match(f));
       if (hit) hits.push({ type:"entry", iso, ref, text: hit, date: iso });
     });
@@ -1787,15 +1972,22 @@ function highlightQ(text, q) {
 
 /* ===== picker ===== */
 function isMobile() { return window.matchMedia("(max-width:700px)").matches; }
-function openPicker() {
+function openPicker(editIndex) {
   const e = currentEntry();
-  if (e.book) {
-    picker.book = e.book; picker.chapter = e.chapter;
-    picker.start = e.verseStart; picker.end = e.verseEnd;
-  } else if (!picker.book) {
-    picker.book = 19; picker.chapter = 23; picker.start = 1; picker.end = 6;
+  const ps = entryPassages(e);
+  if (editIndex != null && editIndex !== "" && ps[editIndex]) {
+    const pass = ps[editIndex];
+    picker.editIndex = +editIndex;
+    picker.book = pass.book;
+    picker.chapter = pass.chapter;
+    picker.verses = [...pass.verses];
+    picker.anchor = picker.verses.length ? picker.verses[0] : null;
+  } else {
+    picker.editIndex = null;
+    picker.verses = [];
+    picker.anchor = null;
+    if (!picker.book) { picker.book = 19; picker.chapter = 23; }
   }
-  picker.picking = "start";
   const mob = isMobile();
   document.body.classList.toggle("pick-open", !mob);
   document.body.classList.toggle("pick-open-m", mob);
@@ -1810,7 +2002,7 @@ function closePicker() {
   $("sheetLayer").hidden = true;
 }
 function placePickCard() {
-  const btn = $("pickBtn"), card = $("pickCard"), layer = $("pickLayer");
+  const btn = $("btnAddPassage"), card = $("pickCard"), layer = $("pickLayer");
   const br = btn.getBoundingClientRect(), lr = layer.getBoundingClientRect();
   let left = br.left - lr.left - 8;
   if (left + 540 > lr.width - 24) left = Math.max(16, lr.width - 564);
@@ -1829,9 +2021,9 @@ function renderPicker() {
   const ids = isMobile() ? { books:"pickBooksM", chs:"pickChsM", vs:"pickVsM", prev:"pickPreviewM", range:"pickRangeM" }
                          : { books:"pickBooks", chs:"pickChs", vs:"pickVs", prev:"pickPreview", range:"pickRange" };
   const bks = books();
-  $(ids.books).innerHTML = bks.map(b =>
-    `<button type="button" class="chip${b.nr===picker.book?" on":""}" data-book="${b.nr}">${esc(b.name)}</button>`
-  ).join("");
+  const bookChip = (b) => `<button type="button" class="chip${b.nr===picker.book?" on":""}" data-book="${b.nr}">${esc(b.name)}</button>`;
+  const group = (label, list) => `<div class="pick-group"><p class="pick-group-label">${label}</p><div class="pick-book-grid">${list.map(bookChip).join("")}</div></div>`;
+  $(ids.books).innerHTML = group("구약", bks.filter(b => b.nr<=OT_COUNT)) + group("신약", bks.filter(b => b.nr>OT_COUNT));
   const book = bookByNr(picker.book) || bks[0];
   picker.book = book.nr;
   const nCh = book.chapters.length;
@@ -1840,26 +2032,36 @@ function renderPicker() {
     const ch=i+1;
     return `<button type="button" class="chip${ch===picker.chapter?" on":""}" data-ch="${ch}">${ch}</button>`;
   }).join("");
-  const last = chapterLength(picker.book, picker.chapter, "krv") || 1;
-  if (picker.start > last) picker.start = 1;
-  if (picker.end > last || picker.end < picker.start) picker.end = last;
-  $(ids.vs).innerHTML = Array.from({length:last}, (_,i) => {
-    const v=i+1;
-    const on = v>=picker.start && v<=picker.end;
+  const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+  const available = new Set(nums);
+  picker.verses = (picker.verses || []).filter(v => available.has(v));
+  $(ids.vs).innerHTML = (nums.length ? nums : []).map(v => {
+    const on = picker.verses.includes(v);
     return `<button type="button" class="chip${on?" on":""}" data-vs="${v}">${v}</button>`;
   }).join("");
-  const ref = formatRef(picker.book, picker.chapter, picker.start, picker.end);
+  const ref = picker.verses.length
+    ? formatPassageRef({ book:picker.book, chapter:picker.chapter, verses:picker.verses })
+    : "구절을 골라 주세요";
   $(ids.range).textContent = ref;
-  const ko1 = verseText("krv", picker.book, picker.chapter, picker.start);
-  $(ids.prev).innerHTML = ko1 ? `<b>${esc(ref)}</b><div>${esc(ko1)}</div>` : "";
+  const first = picker.verses[0];
+  const ko1 = first ? verseText("krv", picker.book, picker.chapter, first) : "";
+  $(ids.prev).innerHTML = picker.verses.length
+    ? `<b>${esc(ref)}</b><div>${esc(ko1 || "")}</div>`
+    : `<span style="color:#6b5c4c">장을 고른 뒤 구절을 눌러 주세요. Shift+클릭하면 사이 구절이 함께 골라져요.</span>`;
+  const onBtn = $(ids.books).querySelector(".chip.on");
+  if (onBtn) onBtn.scrollIntoView({block:"nearest"});
 }
 async function applyPicker() {
+  if (!picker.verses.length) {
+    toast("구절을 골라 주세요.");
+    return;
+  }
   const e = gatherTodayForm();
-  e.book = picker.book;
-  e.chapter = picker.chapter;
-  e.verseStart = picker.start;
-  e.verseEnd = picker.end;
-  if (e.highlight && (e.highlight < e.verseStart || e.highlight > e.verseEnd)) e.highlight = null;
+  const next = { book: picker.book, chapter: picker.chapter, verses: [...picker.verses].sort((a,b)=>a-b) };
+  const ps = entryPassages(e);
+  if (picker.editIndex != null && ps[picker.editIndex]) ps[picker.editIndex] = next;
+  else ps.push(next);
+  e.passages = ps;
   putEntry(currentDate, e);
   closePicker();
   fillTodayForm();
@@ -1868,31 +2070,123 @@ async function applyPicker() {
 }
 
 /* ===== navigation / render ===== */
+function tabKey(name) {
+  if (name === "today" || name === "today-cal" || name === "today-read" || name === "today-edit") return "today";
+  if (name === "read") return "bible";
+  return name;
+}
 function setView(name) {
   if (name !== "search") closeSearchMode(false);
+  if (name === "today-cal") name = "today";
   view = name;
   document.body.dataset.view = name === "read" ? "bible" : name;
   if (name === "read") document.body.dataset.view = "bible";
-  qsa(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === (name==="read"?"bible":name) && name !== "search"));
+  const key = tabKey(name);
+  qsa(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === key && name !== "search"));
   if (name === "search") qsa(".tab").forEach(t => t.classList.remove("on"));
   render();
 }
 function render() {
-  if (view === "today") fillTodayForm();
-  if (view === "cal") renderCalendar();
+  if (view === "today" || view === "today-cal") { renderCalendar(); renderStreak(); }
+  if (view === "today-edit") fillTodayForm();
+  if (view === "today-read") renderDayView();
   if (view === "collect") renderCollect();
   if (view === "pray") renderPrayers();
   if (view === "verse") renderVerses();
   if (view === "bible" || view === "read") renderBible();
   if (view === "search") renderSearch($("searchBox").value);
 }
-function goToDate(iso) {
-  if (view === "today") gatherTodayForm() && putEntry(currentDate, gatherTodayForm());
+function setCurrentDate(iso) {
+  if (view === "today-edit") putEntry(currentDate, gatherTodayForm());
   currentDate = iso;
   const { y,m } = parseISO(iso);
   calYear = colYear = y; calMonth = colMonth = m;
   collectSel = iso;
+}
+function showCalendar() {
+  if (view === "today-edit") putEntry(currentDate, gatherTodayForm());
   setView("today");
+}
+function openDay(iso) {
+  setCurrentDate(iso);
+  setView("today-read");
+}
+function openEditor(iso) {
+  setCurrentDate(iso);
+  setView("today-edit");
+}
+function goToDate(iso) {
+  if (view === "today-edit") { setCurrentDate(iso); setView("today-edit"); return; }
+  if (view === "today-read") { openDay(iso); return; }
+  openDay(iso);
+}
+async function renderDayView() {
+  const iso = currentDate;
+  $("readLabel").innerHTML = dateLabel(iso);
+  const e = getEntry(iso);
+  const has = entryHasContent(e);
+  const box = $("readBody");
+  if (!has) {
+    const isToday = iso === todayISO();
+    box.innerHTML = `<div class="day-empty">
+      <p>이 날에는 아직 묵상이 없어요.</p>
+      <button type="button" class="btn-write" id="btnWriteThis">${isToday ? "오늘 묵상 기록하기" : "이 날 묵상 기록하기"}</button>
+    </div>`;
+    return;
+  }
+  try {
+    if (e.showKrv !== false) await loadBible("krv");
+    if (e.showKjv) await loadBible("kjv");
+  } catch (err) {}
+  const needKrv = e.showKrv !== false, needKjv = !!e.showKjv, both = needKrv && needKjv;
+  const ps = entryPassages(e);
+  let passage = "";
+  if (ps.length) {
+    const parts = [];
+    if (needKrv) parts.push("성경전서 개역한글판, 대한성서공회 1961");
+    if (needKjv) parts.push("King James Version");
+    passage = ps.map(p => {
+      const rows = p.verses.map(v => verseRowHtml(e, p.book, p.chapter, v, needKrv, needKjv, both, false)).join("");
+      return `<div class="d-ref" style="font-size:18px;margin:8px 0 6px">${esc(formatPassageRef(p))}</div>
+        <div class="passage">${rows}</div>`;
+    }).join("") + `<p class="attr">${esc(parts.join("  ·  "))}</p>`;
+  }
+  const hs = entryHighlights(e);
+  let hiBox = `<p class="d-body">아직 고르지 않았어요.</p>`;
+  if (hs.length) {
+    hiBox = hs.map(h => {
+      const row = verseRowHtml(e, h.book, h.chapter, h.verse, needKrv, needKjv, both, false);
+      const ref = formatPassageRef({ book:h.book, chapter:h.chapter, verses:[h.verse] });
+      return `<p class="sec-label" style="margin:6px 0 0">${esc(ref)}</p>${row}`;
+    }).join("");
+  }
+  const field = (n, label, text) => `<section>
+    <p class="sec-label"><span class="sec-n">${n}.</span> ${label}</p>
+    <div class="ruled ${text && text.length>40?"md":"sm"}">${text ? esc(text) : "<span style=\"color:#6b5c4c\">아직 적지 않았어요.</span>"}</div>
+  </section>`;
+  const thanks = (e.thanks || ["","",""]);
+  box.innerHTML = `
+    <div class="day-tools"><span class="day-mood">오늘 마음 · ${esc(e.mood || "맑음")}</span>
+      <button type="button" class="btn-write ghost" id="btnEditThis">이 날 묵상 고치기</button></div>
+    <section>
+      <p class="sec-label">본문</p>
+      ${passage || `<div class="d-ref" style="font-size:18px;margin:0 0 6px">본문 없음</div>`}
+    </section>
+    <section>
+      <p class="sec-label">마음에 남는 구절</p>
+      ${hiBox}
+    </section>
+    ${field("1","오늘 본문의 내용", (e.summary||"").trim())}
+    ${field("2","주석에서 찾은 내용", (e.notes||"").trim())}
+    ${field("3","하나님은 어떤 분이신가", (e.whoGod||"").trim())}
+    ${field("4","느낀 점", (e.feeling||"").trim())}
+    ${field("5","적용점", (e.apply||"").trim())}
+    <section>
+      <p class="sec-label"><span class="sec-n">6.</span> 감사 세가지</p>
+      <div class="thanks">${[0,1,2].map(i => `<div class="t-row"><span class="n">${i+1}</span><div class="line">${thanks[i] ? esc(thanks[i]) : "<span style=\"color:#6b5c4c\"> </span>"}</div></div>`).join("")}</div>
+    </section>
+    ${field("7","기도", (e.prayer||"").trim())}
+  `;
 }
 function closeSearchMode(reset) {
   $("searchBox").classList.remove("open");
@@ -1902,13 +2196,29 @@ function closeSearchMode(reset) {
 /* ===== events ===== */
 qsa(".tab").forEach(t => t.addEventListener("click", ev => {
   ev.preventDefault();
-  setView(t.dataset.tab);
+  if (t.dataset.tab === "today") showCalendar();
+  else setView(t.dataset.tab);
 }));
+$("logoBtn").onclick = () => showCalendar();
+$("btnWriteToday").onclick = () => openEditor(todayISO());
+$("editBackCal").onclick = () => showCalendar();
+$("readBackCal").onclick = () => showCalendar();
+$("readPrev").onclick = () => openDay(addDays(currentDate, -1));
+$("readNext").onclick = () => openDay(addDays(currentDate, 1));
+$("calJumpToday").onclick = () => {
+  const iso = todayISO();
+  const { y,m } = parseISO(iso);
+  calYear = y; calMonth = m;
+  renderCalendar();
+};
 $("prevDay").onclick = () => goToDate(addDays(currentDate, -1));
 $("nextDay").onclick = () => goToDate(addDays(currentDate, 1));
 $("jumpToday").onclick = () => goToDate(todayISO());
 $("calPrev").onclick = () => { calMonth--; if (calMonth<1){calMonth=12;calYear--;} renderCalendar(); };
 $("calNext").onclick = () => { calMonth++; if (calMonth>12){calMonth=1;calYear++;} renderCalendar(); };
+$("readBody").addEventListener("click", ev => {
+  if (ev.target.id === "btnWriteThis" || ev.target.id === "btnEditThis") openEditor(currentDate);
+});
 $("colPrev").onclick = () => { colMonth--; if (colMonth<1){colMonth=12;colYear--;} renderCollect(); };
 $("colNext").onclick = () => { colMonth++; if (colMonth>12){colMonth=1;colYear++;} renderCollect(); };
 $("colToday").onclick = () => {
@@ -1936,8 +2246,27 @@ $("chipKjv").onclick = () => {
   if (!e.showKrv && !e.showKjv) e.showKrv = true;
   putEntry(currentDate, e); fillTodayForm();
 };
-$("pickBtn").onclick = openPicker;
-$("refLine").onclick = openPicker;
+$("btnAddPassage").onclick = () => openPicker(null);
+$("passageBlocks").addEventListener("click", ev => {
+  const del = ev.target.closest("[data-del]");
+  const edit = ev.target.closest("[data-edit]");
+  if (del) {
+    ev.preventDefault();
+    const e = gatherTodayForm();
+    const ps = entryPassages(e);
+    const i = +del.dataset.del;
+    ps.splice(i, 1);
+    e.passages = ps;
+    putEntry(currentDate, e);
+    fillTodayForm();
+    return;
+  }
+  if (edit) {
+    ev.preventDefault();
+    openPicker(+edit.dataset.edit);
+  }
+});
+$("passageBlocks").addEventListener("click", onVerseClick);
 $("pickLayer").addEventListener("click", ev => { if (ev.target.id === "pickLayer") closePicker(); });
 $("sheetLayer").addEventListener("click", ev => { if (ev.target.id === "sheetLayer") closePicker(); });
 $("pickGo").onclick = applyPicker;
@@ -1947,23 +2276,30 @@ function onPickClick(ev) {
   const ch = ev.target.closest("[data-ch]");
   const vs = ev.target.closest("[data-vs]");
   if (book) {
-    picker.book = +book.dataset.book; picker.chapter = 1; picker.start = 1;
-    picker.end = chapterLength(picker.book, 1, "krv") || 1;
-    picker.picking = "start";
+    picker.book = +book.dataset.book;
+    picker.chapter = 1;
+    picker.verses = [];
+    picker.anchor = null;
     renderPicker(); return;
   }
   if (ch) {
-    picker.chapter = +ch.dataset.ch; picker.start = 1;
-    picker.end = chapterLength(picker.book, picker.chapter, "krv") || 1;
-    picker.picking = "start";
+    picker.chapter = +ch.dataset.ch;
+    picker.verses = [];
+    picker.anchor = null;
     renderPicker(); return;
   }
   if (vs) {
     const v = +vs.dataset.vs;
-    if (picker.picking === "start" || v < picker.start) {
-      picker.start = v; picker.end = v; picker.picking = "end";
+    const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+    if (ev.shiftKey && picker.anchor != null) {
+      const a = Math.min(picker.anchor, v);
+      const b = Math.max(picker.anchor, v);
+      picker.verses = nums.filter(n => n>=a && n<=b);
     } else {
-      picker.end = v; picker.picking = "start";
+      const set = new Set(picker.verses);
+      if (set.has(v)) set.delete(v); else set.add(v);
+      picker.verses = [...set].sort((a,b)=>a-b);
+      picker.anchor = v;
     }
     renderPicker();
   }
@@ -1971,20 +2307,27 @@ function onPickClick(ev) {
 $("pickCard").addEventListener("click", onPickClick);
 $("sheetLayer").addEventListener("click", onPickClick);
 
-$("passage").addEventListener("click", onVerseClick);
 $("highlightBox").addEventListener("click", onVerseClick);
 function onVerseClick(ev) {
   const star = ev.target.closest("[data-star]");
   const pv = ev.target.closest(".pv");
   const e = currentEntry();
-  if (!e.book) return;
   if (star) {
     ev.stopPropagation();
-    toggleStar(e.book, e.chapter, +star.dataset.star);
+    const book = +(star.dataset.book || e.book);
+    const ch = +(star.dataset.chapter || e.chapter);
+    toggleStar(book, ch, +star.dataset.star);
     return;
   }
   if (pv && pv.dataset.verse) {
-    e.highlight = +pv.dataset.verse;
+    const book = +(pv.dataset.book || e.book);
+    const ch = +(pv.dataset.chapter || e.chapter);
+    const verse = +pv.dataset.verse;
+    let hs = entryHighlights(e);
+    const i = hs.findIndex(h => h.book===book && h.chapter===ch && h.verse===verse);
+    if (i >= 0) hs.splice(i, 1);
+    else hs.push({ book, chapter: ch, verse });
+    e.highlights = hs;
     putEntry(currentDate, e);
     renderPassage();
   }
@@ -2089,32 +2432,32 @@ document.addEventListener("keydown", ev => {
 
 /* ===== boot ===== */
 function boot() {
-  fillTodayForm();
-  loadBible("krv").then(() => {
-    if (currentEntry().book) renderPassage();
-  }).catch(() => {
-    $("bibleLoad").hidden = true;
-  });
-  // prefetch kjv quietly if last entry used it
-  if (currentEntry().showKjv) loadBible("kjv").catch(()=>{});
+  renderCalendar();
+  renderStreak();
+  loadBible("krv").catch(() => { const el=$("bibleLoad"); if (el) el.hidden = true; });
 }
 
 window.__dailybread = {
   todayISO, get data() { return data; }, get date() { return currentDate; },
-  setView, goToDate, getEntry,
+  setView, goToDate, getEntry, showCalendar, openDay, openEditor,
   async setPassage(nr, ch, a, b, opts={}) {
     await loadBible("krv");
     if (opts.kjv) await loadBible("kjv");
     const e = gatherTodayForm();
-    e.book = nr; e.chapter = ch; e.verseStart = a; e.verseEnd = b;
+    const verses = opts.verses ? [...opts.verses] : versesFromRange(a, b);
+    const next = { book:nr, chapter:ch, verses };
+    if (opts.add) e.passages = entryPassages(e).concat([next]);
+    else e.passages = [next];
     if (opts.kjv) e.showKjv = true;
     if (opts.krv === false) e.showKrv = false;
     putEntry(currentDate, e);
+    if (view !== "today-edit") openEditor(currentDate);
     fillTodayForm();
     await renderPassage();
-    return e;
+    return getEntry(currentDate);
   },
-  loadBible, flushCloud, saveLocal, autosaveToday, formatRef, verseText,
+  loadBible, flushCloud, saveLocal, autosaveToday, formatRef, formatPassageRef, formatEntryRefs,
+  verseText, openPicker, migrateEntry, entryPassages, entryHighlights, getEntry,
   toast
 };
 
