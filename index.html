@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dailybread</title>
+<style>
+
+@font-face{font-family:'Do Hyeon';src:url('fonts/DoHyeon-Regular.ttf') format('truetype');font-weight:400;font-style:normal;font-display:block}
+@font-face{font-family:'Cormorant Garamond';src:url('fonts/CormorantGaramond-VariableFont_wght.ttf') format('truetype');font-weight:400 700;font-style:normal;font-display:block}
+@font-face{font-family:'Cormorant Garamond';src:url('fonts/CormorantGaramond-Italic-VariableFont_wght.ttf') format('truetype');font-weight:400 700;font-style:italic;font-display:block}
+
+
+:root{
+  --desk:#c4b094;
+  --paper:#f7f4ec;
+  --paper-tab:#f3f0e8;
+  --paper-on:#fffcf6;
+  --paper-border:#d4cbb8;
+  --tab-border:#ddd4c4;
+  --tab-on-border:#cfc6b4;
+  --tab-c2:#eef2e8;
+  --tab-c3:#f6ebe8;
+  --tab-c4:#eceef4;
+  --tab-c5:#f3eee4;
+  --tab-c6:#efe6d8;
+  --rule:rgba(150,135,115,.28);
+  --margin:rgba(196,100,100,.38);
+  --header-line:rgba(140,120,90,.16);
+  --btn-border:#d0c6b4;
+  --login-border:#c4b8a4;
+  --paper-img:url('assets/paper_ivory.jpg');
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body, .ruled, .line, .txt, .vtxt, .htxt, .sn, .bk .nm{
+  word-break:keep-all;overflow-wrap:break-word;
+}
+body{
+  background:#c4b094 url('assets/desk.jpg') center/400px repeat;
+  color:#3a3026;
+  font-family:'Do Hyeon',sans-serif;
+  font-weight:400;
+  min-height:100vh;
+  -webkit-text-stroke: calc(1.5px * 18 / 44) var(--paper);
+}
+button,input,textarea{font-family:inherit;color:inherit}
+
+.frame{padding:22px 36px 36px;max-width:1280px;margin:0 auto}
+@media(max-width:700px){.frame{padding:10px 8px 18px}}
+
+/* ===== index tabs ===== */
+.tabs{
+  display:flex;align-items:flex-end;gap:5px;
+  padding-left:56px;margin:0 8px -1px;position:relative;z-index:3;
+  flex-wrap:wrap;
+}
+.tab{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:86px;padding:7px 16px 9px;
+  background:var(--paper-tab) var(--paper-img) center/800px;
+  border:1px solid var(--tab-border);
+  border-bottom:none;
+  border-radius:10px 10px 0 0;
+  color:#8a7a64;font-size:18px;letter-spacing:.01em;
+  text-decoration:none;line-height:1;box-shadow:0 -1px 0 rgba(255,255,255,.35) inset;
+}
+.tab.c2{background-color:var(--tab-c2)}
+.tab.c3{background-color:var(--tab-c3)}
+.tab.c4{background-color:var(--tab-c4)}
+.tab.c5{background-color:var(--tab-c5)}
+.tab.c6{background-color:var(--tab-c6)}
+.tab.on{
+  color:#3a3026;font-weight:700;
+  padding-top:10px;padding-bottom:11px;
+  background:var(--paper-on) var(--paper-img) center/800px;
+  border-color:var(--tab-on-border);
+  box-shadow:0 -2px 0 rgba(255,248,230,.5) inset;
+  position:relative;z-index:4;
+}
+body[data-view=search] .tab.on{color:#8a7a64;font-weight:400;padding-top:7px;padding-bottom:9px}
+
+/* ===== notebook ===== */
+.notebook{
+  display:flex;align-items:stretch;
+  background:var(--paper) var(--paper-img) center/620px;
+  border:1px solid var(--paper-border);
+  border-radius:4px 10px 10px 6px;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.45) inset,
+    0 14px 28px rgba(70,50,25,.18),
+    0 2px 6px rgba(70,50,25,.12);
+  min-height:820px;position:relative;
+}
+.notebook::after{
+  content:'';position:absolute;top:8px;right:0;bottom:10px;width:18px;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(140,110,70,.07));
+  border-radius:0 10px 10px 0;
+}
+
+/* spiral binding — hollow rings through punched holes */
+.bind{
+  flex:0 0 42px;width:42px;margin-left:-10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
+  padding:22px 0 18px;
+  position:relative;z-index:5;
+}
+.bind i{
+  width:28px;height:14px;border-radius:8px;position:relative;flex:0 0 auto;
+  background:transparent;
+  border:2.3px solid #5a5550;
+  box-shadow:0 1px 1px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.bind i::before{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:10px;height:10px;border-radius:50%;
+  background:#c4b094;
+  box-shadow:inset 0 1px 1px rgba(60,40,20,.4);
+}
+
+.page{flex:1;min-width:0;position:relative;padding:4px 28px 28px 14px}
+
+/* red margin line */
+.page::before{
+  content:'';position:absolute;left:0;top:68px;bottom:22px;width:1.6px;
+  background:var(--margin);
+  pointer-events:none;
+}
+
+/* ===== header ===== */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+  padding:16px 4px 10px 8px;
+  border-bottom:1px solid var(--header-line);
+}
+h1{
+  margin:0;font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
+  font-size:40px;color:#3a3026;letter-spacing:.01em;line-height:1;
+  -webkit-text-stroke:0;
+}
+.header-right{display:flex;align-items:center;gap:14px}
+.search-wrap{display:flex;align-items:center;gap:8px}
+.search-wrap input{
+  width:0;opacity:0;border:none;border-bottom:1px solid #8a7a64;
+  background:transparent;outline:none;font-size:18px;padding:0 0 2px;
+  transition:.25s;
+}
+body[data-view=search] .search-wrap input,
+.search-wrap input.open{width:180px;opacity:1}
+.search-btn{background:none;border:none;padding:2px;cursor:pointer;display:flex;color:#3a3026}
+.btn-login{
+  border:1px solid var(--login-border);background:rgba(255,255,255,.28);
+  border-radius:16px;padding:3px 12px;font-size:15px;color:#5a4e40;cursor:pointer;white-space:nowrap;
+}
+
+/* ===== shared ===== */
+.view{display:none}
+body[data-view=today] #v-today,
+body[data-view=cal] #v-cal,
+body[data-view=pray] #v-pray,
+body[data-view=verse] #v-verse,
+body[data-view=bible] #v-bible,
+body[data-view=read] #v-read,
+body[data-view=search] #v-search{display:block}
+body[data-view=today-a] #v-today-a,
+body[data-view=today-b] #v-today-b,
+body[data-view=today-bi] #v-today-bi,
+body[data-view=today-bi-b] #v-today-bi-b{display:block}
+body[data-view=today-ns] #v-today-ns{display:block}
+body[data-view=today-v3] #v-today-v3{display:block}
+body[data-view=collect] #v-collect{display:block}
+body[data-view=picker] #v-today-a,
+body[data-view=picker-m] #v-today-a{display:block}
+
+.toolbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:10px;flex-wrap:wrap;margin:16px 0 18px;padding-left:8px;
+}
+.date-nav{display:flex;align-items:center;gap:10px;min-width:0}
+.nav-btn{
+  width:26px;height:26px;border:1px solid var(--btn-border);background:rgba(255,255,255,.4);
+  border-radius:50%;color:#5a4e40;font-size:14px;line-height:24px;text-align:center;
+  font-family:'Cormorant Garamond',serif;font-weight:700;padding:0;cursor:pointer;
+  -webkit-text-stroke:0;
+}
+.date-label{
+  font-weight:400;font-size:22px;color:#3a3026;-webkit-text-stroke:calc(1.5px * 22 / 44) var(--paper);
+  letter-spacing:-.01em;white-space:nowrap;line-height:1;
+}
+.date-label em{font-style:normal;font-weight:400;font-size:16px;color:#7a6b58;margin-left:6px}
+.jump{
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.4);border-radius:16px;
+  padding:2px 10px;font-size:14px;color:#5a4e40;cursor:pointer;
+}
+.streak{
+  display:flex;align-items:center;gap:8px;color:#6b5c4c;font-size:16px;white-space:nowrap;
+}
+.dots{display:flex;gap:4px}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  border:1.4px solid #c9b9a0;background:#f0e6d2;
+}
+.dot.on{background:#c4a070;border-color:#a98458}
+.dot.today{background:#a05645;border-color:#8a4538;box-shadow:0 0 0 2px rgba(160,86,69,.18)}
+
+/* writing fields */
+.stack{display:flex;flex-direction:column;gap:18px;padding:2px 8px 8px 12px;max-width:880px}
+.sec-label{
+  margin:0 0 4px;font-size:13px;color:#8a7a64;letter-spacing:.02em;
+  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+}
+.ref-row{display:flex;align-items:flex-end;gap:10px}
+.ref-row .line{flex:1}
+.star{
+  background:none;border:none;padding:0 2px 4px;cursor:pointer;
+  font-size:22px;line-height:1;color:#c9b9a0;
+}
+.star.on{color:#b08a4a}
+.line, .ruled{
+  width:100%;border:none;background:transparent;outline:none;resize:none;
+  padding:0 4px 0 0;color:#3a3026;
+}
+.line{
+  font-size:18px;line-height:32px;height:32px;-webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+  background-image:linear-gradient(to bottom, transparent 31px, var(--rule) 31px, var(--rule) 32px);
+  background-size:100% 32px;
+}
+.ruled{
+  font-size:18px;line-height:32px;-webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+  background-image:repeating-linear-gradient(
+    to bottom,
+    transparent 0, transparent 31px,
+    var(--rule) 31px, var(--rule) 32px
+  );
+  min-height:64px;
+}
+.ruled.verse{
+  font-size:18px;line-height:32px;color:#2f281f;
+  -webkit-text-stroke:calc(1.5px * 18 / 44) var(--paper);
+}
+.ruled.sm{min-height:64px}
+.ruled.md{min-height:96px}
+
+/* ===== calendar ===== */
+.month-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 4px 8px 8px}
+.m-dow{
+  text-align:center;font-weight:400;
+  font-size:13px;color:#9a8a74;padding:2px 0 6px;letter-spacing:.04em;
+  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+}
+.m-dow.sun{color:#b07070}
+.mday{
+  min-height:112px;border-radius:2px;
+  background:rgba(255,252,245,.28);
+  border:1px solid rgba(160,120,90,.2);
+  display:flex;flex-direction:column;align-items:center;
+  padding:8px 4px 8px;position:relative;
+}
+.mday .num{
+  font-weight:400;font-size:15px;color:#5a4e40;line-height:1;-webkit-text-stroke:calc(1.5px * 15 / 44) var(--paper);
+}
+.mday.sun .num{color:#a45c5c}
+.mday.today .num{
+  width:26px;height:26px;border:1.5px solid #3a3026;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#3a3026;
+}
+.mday.mute{background:transparent;border-color:rgba(160,120,90,.12)}
+.mday.mute .num{color:#c4b49a}
+.mday .mark{
+  width:7px;height:7px;border-radius:50%;background:#a05645;margin-top:8px;opacity:.9;
+}
+.mday .ref{
+  margin-top:6px;font-size:12px;color:#6b5c4c;-webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  text-align:center;line-height:1.35;letter-spacing:-.02em;
+}
+.cal-note{margin:10px 8px 0;font-size:13px;color:#9a8a74}
+
+/* ===== lists / prayers / verses ===== */
+.sec-title{
+  font-size:18px;color:#6b5c4c;margin:6px 8px 10px;display:flex;align-items:baseline;gap:8px;
+}
+.sec-title b{font-weight:700;color:#3a3026}
+.list{display:flex;flex-direction:column;gap:7px;padding:0 8px 4px 8px}
+.row{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 8px 8px 4px;
+  border-bottom:1px solid rgba(160,120,90,.22);
+}
+.ck{
+  flex:0 0 18px;width:18px;height:18px;margin-top:3px;
+  border:1.5px solid #8a7a64;border-radius:3px;background:rgba(255,255,255,.35);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:400;font-size:15px;line-height:1;color:transparent;-webkit-text-stroke:0;
+}
+.ck.on{background:#3a3026;border-color:#3a3026;color:#f3e7cf;-webkit-text-stroke:0}
+.row .txt{flex:1;min-width:0;font-size:18px;line-height:1.35;padding-top:1px}
+.row.done .txt{color:#9a8d7c;text-decoration:line-through;text-decoration-color:rgba(154,141,124,.7)}
+.row .meta{flex:0 0 auto;font-size:14px;color:#9a8a74;padding-top:3px;white-space:nowrap}
+.add-bar{
+  margin:8px 8px 18px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap;
+  border-bottom:1px solid rgba(160,120,90,.4);padding:6px 4px 7px;
+}
+.add-bar input{
+  flex:1;min-width:0;border:none;background:transparent;outline:none;font-size:18px;color:#3a3026;
+}
+.add-bar input::placeholder{color:#c0b09a}
+.add-bar button{
+  flex:0 0 auto;white-space:nowrap;
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.4);border-radius:16px;
+  padding:3px 12px;font-size:15px;color:#5a4e40;cursor:pointer;
+}
+
+/* verses */
+.vcard{
+  padding:10px 8px 14px;margin:0 8px;
+  border-bottom:1px dashed rgba(160,120,90,.4);
+}
+.vcard .vtop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
+.vcard .vref{font-size:18px;color:#3a3026}
+.vcard .vdate{font-size:13px;color:#9a8a74}
+.vcard .vtxt{font-size:17px;line-height:1.7;color:#2f281f}
+.vcard .star{font-size:18px;padding:0;color:#b08a4a}
+
+/* bible by book */
+.book{
+  margin:0 8px 4px;border-bottom:1px solid rgba(160,120,90,.22);
+}
+.book-h{
+  display:flex;align-items:baseline;justify-content:space-between;
+  padding:10px 4px;font-size:19px;cursor:pointer;
+}
+.book-h .nm{font-weight:700}
+.book-h .cnt{font-size:14px;color:#9a8a74}
+.book.open .book-h{color:#3a3026}
+.entries{display:none;padding:0 4px 10px 12px}
+.book.open .entries{display:block}
+.ent{
+  display:flex;align-items:baseline;gap:12px;padding:6px 0;
+  border-top:1px dashed rgba(160,120,90,.3);font-size:16px;
+}
+.ent .dt{flex:0 0 72px;color:#8a7a64}
+.ent .rf{flex:0 0 130px;font-weight:700}
+.ent .sn{flex:1;font-size:15px;color:#6b5c4c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;-webkit-text-stroke:calc(1.5px * 15 / 44) var(--paper)}
+
+/* 통독 */
+.prog-wrap{margin:4px 8px 18px;padding:0 4px}
+.prog-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+.prog-top .big{font-size:24px;-webkit-text-stroke:calc(1.5px * 24 / 44) var(--paper)}
+.prog-top .sub{font-size:15px;color:#7a6b58}
+.bar{height:7px;background:rgba(160,120,90,.22);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;width:19.7%;background:#8a5a3a;border-radius:99px}
+.group-label{
+  margin:14px 8px 8px;font-size:16px;color:#6b5c4c;
+  display:flex;align-items:baseline;gap:8px;
+  border-bottom:1px solid rgba(160,120,90,.3);padding-bottom:4px;
+}
+.books{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px 10px;
+  padding:0 8px 8px;
+}
+.bk{
+  display:flex;align-items:center;gap:7px;
+  padding:5px 2px;font-size:16px;color:#3a3026;min-width:0;
+}
+.bk .box{
+  flex:0 0 15px;width:15px;height:15px;border:1.4px solid #8a7a64;border-radius:3px;
+  background:rgba(255,255,255,.35);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;line-height:1;color:transparent;
+}
+.bk.done{color:#3a3026}
+.bk.done .box{background:#3a3026;border-color:#3a3026;color:#f3e7cf;-webkit-text-stroke:0}
+.bk.doing{color:#8a5a3a}
+.bk.doing .box{flex:0 0 20px;width:20px;background:#f3e7cf;border-color:#8a5a3a;color:#8a5a3a;font-size:11px;-webkit-text-stroke:0}
+.bk .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* search */
+.search-head{padding:8px 8px 4px}
+.search-head .q{font-size:20px}
+.search-head .n{font-size:15px;color:#8a7a64;margin-left:8px}
+.hit{padding:12px 8px;margin:0 8px;border-bottom:1px dashed rgba(160,120,90,.4);cursor:pointer}
+.hit .htop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:4px}
+.hit .href{font-weight:700;font-size:18px}
+.hit .hdate{font-size:14px;color:#9a8a74}
+.hit .htxt{font-size:16px;line-height:1.6;color:#4a4034}
+.hit mark{background:transparent;color:#a05645;font-weight:700}
+
+.seg{
+  display:inline-flex;border:1px solid var(--btn-border);border-radius:16px;overflow:hidden;
+  background:rgba(255,255,255,.3);
+}
+.seg button{
+  border:0;background:transparent;padding:3px 12px;font-size:15px;color:#7a6b58;cursor:pointer;
+  border-right:1px solid #cbb89a;
+}
+.seg button:last-child{border-right:0}
+.seg button.on{background:#3a3026;color:#f3e7cf;-webkit-text-stroke:calc(1.5px * 15 / 44) #3a3026}
+
+@media(max-width:700px){
+  .tabs{padding-left:34px;gap:3px;margin-left:2px}
+  .tabs{padding-left:28px;gap:2px}
+  .tab{min-width:0;padding:6px 6px 8px;font-size:13px;letter-spacing:-.02em}
+  .tab.on{padding-top:8px;padding-bottom:9px}
+  .notebook{min-height:calc(100vh - 48px);border-radius:3px 8px 8px 4px}
+  .bind{flex-basis:28px;width:28px;margin-left:-6px;padding:16px 0}
+  .bind i{width:18px;height:10px;border-radius:6px;border-width:2px}
+  .bind i::before{width:7px;height:7px}
+  .page{padding:2px 14px 18px 8px}
+  .page::before{top:58px;left:0}
+  header{padding:10px 0 8px 4px}
+  h1{font-size:30px}
+  .btn-login{font-size:13px;padding:2px 9px}
+  .date-label{font-size:20px}
+  .date-label em{font-size:14px;margin-left:3px}
+  .toolbar{margin:12px 0 12px;padding-left:4px;gap:8px}
+  .stack{padding:0 0 8px 8px;gap:16px}
+  .line,.ruled,.ruled.verse{font-size:18px}
+  .month-cal{gap:3px;padding:0 0 4px 4px}
+  .mday{min-height:58px;padding:5px 2px 4px}
+  .mday .num{font-size:13px}
+  .mday.today .num{width:22px;height:22px}
+  .mday .mark{width:6px;height:6px;margin-top:6px}
+  .mday .ref{display:none}
+  .books{grid-template-columns:repeat(2,1fr);gap:2px 8px}
+  .ent{flex-wrap:wrap;gap:2px 10px}
+  .ent .rf{flex:0 0 auto}
+  .ent .sn{flex:1 1 100%}
+  body[data-view=search] .search-wrap input,
+  .search-wrap input.open{width:120px}
+}
+
+/* ===== richer today + verse picker ===== */
+.wx{display:flex;align-items:center;gap:8px;font-size:14px;color:#8a7a64}
+.wx .wlab{margin-right:2px}
+.wx button{
+  border:none;background:none;padding:0 2px;cursor:pointer;color:#b0a090;font-size:14px;
+}
+.wx button.on{color:#3a3026;border-bottom:1px solid #3a3026;padding-bottom:1px}
+.qt-book{
+  margin:0 8px 14px 12px;display:flex;align-items:baseline;gap:10px;
+}
+.qt-book .sec-label{margin:0;white-space:nowrap}
+.qt-book .line{flex:1}
+
+.ref-tools{display:flex;align-items:flex-end;gap:10px;margin:0 0 8px}
+.ref-tools .line{flex:1}
+.pick-btn, .trans-tag{
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.35);
+  border-radius:16px;padding:2px 10px;font-size:13px;color:#5a4e40;cursor:pointer;white-space:nowrap;
+}
+.trans-tag{border-style:dashed;cursor:default}
+
+.passage{
+  margin:0 0 6px;padding:8px 4px 10px;
+  border-top:1px solid var(--header-line);border-bottom:1px solid var(--header-line);
+}
+.pv{display:flex;gap:10px;align-items:flex-start;padding:3px 4px;border-radius:3px}
+.pv .vn{flex:0 0 18px;font-size:13px;color:#9a8a74;padding-top:3px;text-align:right}
+.pv .vt{flex:1;font-size:17px;line-height:1.7;color:#2f281f}
+.pv.hi{background:rgba(176,138,74,.12)}
+.pv.hi .vt{color:#3a3026}
+.pv .star{font-size:16px;padding:2px 0 0;color:#b08a4a}
+.attr{margin:6px 4px 0;font-size:12px;color:#8a7a64;letter-spacing:.01em;-webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper)}
+
+.qsec{margin-top:2px}
+.opt-row{
+  display:flex;gap:16px;margin:8px 8px 0 12px;padding-top:10px;
+  border-top:1px dashed rgba(160,120,90,.28);
+}
+.opt-link{
+  border:none;background:none;padding:0;font-size:14px;color:#9a8a74;cursor:pointer;
+}
+
+.thanks{display:flex;flex-direction:column;gap:0;margin:0}
+.thanks .t-row{display:flex;align-items:flex-end;gap:8px}
+.thanks .n{flex:0 0 16px;font-size:14px;color:#9a8a74;padding-bottom:6px}
+.letter .line{font-size:18px}
+.photo-opt{
+  margin-top:4px;border:1.4px dashed #d4cbb8;border-radius:8px;
+  min-height:72px;display:flex;align-items:center;justify-content:center;
+  color:#b0a090;font-size:14px;background:rgba(255,255,255,.25);
+}
+
+/* picker card (desktop) */
+.pick-layer{display:none}
+body[data-view=picker] .pick-layer{
+  display:block;position:absolute;inset:0;z-index:20;
+  background:rgba(90,70,45,.12);
+}
+.pick-card{
+  position:absolute;left:72px;top:210px;width:540px;z-index:21;
+  background:var(--paper-on) var(--paper-img) center/800px;
+  border:1px solid var(--paper-border);border-radius:8px;
+  box-shadow:0 12px 28px rgba(70,50,25,.18);
+  padding:14px 16px 16px;
+}
+.pick-card h3{margin:0 0 10px;font-size:16px;font-weight:400;color:#3a3026}
+.pick-search{
+  width:100%;border:none;border-bottom:1px solid var(--btn-border);
+  background:transparent;outline:none;font-size:16px;padding:4px 0 6px;margin-bottom:12px;color:#3a3026;
+}
+.pick-cols{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px}
+.pick-col{min-width:0}
+.pick-col .lab{font-size:12px;color:#9a8a74;margin:0 0 6px}
+.books, .chs, .vs{display:flex;flex-wrap:wrap;gap:4px;max-height:220px;overflow:hidden}
+.chip{
+  border:1px solid var(--tab-border);background:rgba(255,255,255,.4);
+  border-radius:6px;padding:3px 8px;font-size:13px;color:#5a4e40;cursor:pointer;
+}
+.chip.on{background:#3a3026;color:#f7f4ec;border-color:#3a3026;-webkit-text-stroke:0}
+.chs .chip, .vs .chip{min-width:30px;text-align:center;padding:3px 0}
+.pick-preview{margin-top:12px;padding-top:10px;border-top:1px solid var(--header-line);font-size:14px;color:#5a4e40;line-height:1.55}
+.pick-preview b{font-weight:400;color:#3a3026}
+.pick-foot{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+.pick-foot .src{font-size:12px;color:#9a8a74}
+.pick-go{
+  border:1px solid #3a3026;background:#3a3026;color:#f7f4ec;
+  border-radius:16px;padding:4px 14px;font-size:15px;cursor:pointer;-webkit-text-stroke:0;
+}
+
+/* mobile sheet */
+.sheet-layer{display:none}
+body[data-view=picker-m] .sheet-layer{
+  display:block;position:fixed;left:0;right:0;bottom:0;top:auto;z-index:20;
+}
+body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
+
+.pick-sheet{
+  background:var(--paper-on) var(--paper-img) center/800px;
+  border-top:1px solid var(--paper-border);
+  border-radius:16px 16px 0 0;
+  box-shadow:0 -8px 24px rgba(70,50,25,.16);
+  padding:8px 16px 18px;
+}
+.pick-sheet .handle{width:40px;height:4px;border-radius:2px;background:#d4cbb8;margin:4px auto 10px}
+.pick-sheet h3{margin:0 0 8px;font-size:16px;font-weight:400}
+.pick-sheet .pick-cols{grid-template-columns:1fr;gap:8px}
+.pick-sheet .books{max-height:88px}
+.pick-sheet .chs, .pick-sheet .vs{max-height:120px}
+
+@media(max-width:700px){
+  .wx{width:100%;margin-top:2px}
+  .pick-card{left:12px;right:12px;width:auto;top:180px}
+  .pv .vt{font-size:16px}
+}
+
+
+.trow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.trow .lab{font-size:12px;color:#9a8a74;margin:0}
+.tchip{
+  border:1px solid var(--tab-border);background:rgba(255,255,255,.4);
+  border-radius:16px;padding:3px 11px;font-size:14px;color:#5a4e40;cursor:pointer;
+}
+.tchip.on{background:#3a3026;color:#f7f4ec;border-color:#3a3026;-webkit-text-stroke:0}
+.vt-col{flex:1;min-width:0}
+.vt.en{
+  display:block;margin-top:3px;
+  font-family:'Cormorant Garamond',serif;font-weight:500;font-style:normal;
+  font-size:16px;line-height:1.5;color:#5a4e40;-webkit-text-stroke:0;
+}
+.pick-preview .en{
+  font-family:'Cormorant Garamond',serif;font-size:14px;color:#5a4e40;
+  -webkit-text-stroke:0;margin-top:2px;
+}
+
+
+.mode-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 2px}
+.mode-row .sec-label{margin:0}
+.qt-book.ns{flex-wrap:wrap;align-items:flex-start;gap:8px 14px}
+.qt-book.ns .ns-meta{flex:1;min-width:0}
+.ns-title{margin:4px 0 0;font-size:20px;color:#3a3026;line-height:1.35}
+.ns-note{margin:6px 0 0;font-size:13px;color:#8a7a64;line-height:1.5;-webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper)}
+.ns-link{
+  border:1px solid #3a3026;background:#3a3026;color:#f7f4ec;
+  border-radius:16px;padding:5px 14px;font-size:14px;cursor:pointer;
+  -webkit-text-stroke:0;white-space:nowrap;align-self:center;
+}
+@media(max-width:700px){
+  .ns-link{margin-top:2px}
+  .ns-title{font-size:18px}
+}
+
+
+.sec-label .sec-n{display:inline-block;min-width:1.1em;margin-right:2px;color:#9a8a74}
+.ex{
+  display:inline-block;margin-left:8px;padding:0 7px 1px;
+  font-size:11px;color:#9a8a74;letter-spacing:.02em;
+  border:1px solid #d4cbb8;border-radius:8px;vertical-align:middle;
+  -webkit-text-stroke:0;
+}
+.sec-label .ex{
+  display:inline-block;margin-left:8px;padding:0 7px 1px;
+  font-size:11px;color:#9a8a74;letter-spacing:.02em;
+  border:1px solid #d4cbb8;border-radius:8px;vertical-align:middle;
+  -webkit-text-stroke:0;
+}
+
+
+/* ===== 모아보기 (month collect) ===== */
+.collect-filters{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:0 8px 12px 8px;
+}
+.collect-filters .sec-label{margin:0 4px 0 0}
+.collect-note{margin:0 8px 12px;font-size:13px;color:#9a8a74;-webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper)}
+.collect-note-mob{display:none}
+.collect-wrap{display:flex;align-items:stretch;gap:18px;padding:0 8px 16px 8px}
+.collect-cal{flex:1;min-width:0}
+.collect-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
+}
+.c-dow{
+  text-align:center;font-size:12px;color:#9a8a74;padding:0 0 6px;letter-spacing:.04em;
+  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+}
+.c-dow.sun{color:#b07070}
+.cday{
+  min-height:100px;padding:6px 7px 7px;
+  border:1px solid rgba(160,120,90,.2);border-radius:3px;
+  background:rgba(255,252,245,.28);
+  display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+}
+.cday.mute{background:transparent;border-color:rgba(160,120,90,.1)}
+.cday.mute .num{color:#c4b49a}
+.cday .num{
+  font-size:13px;color:#5a4e40;line-height:1;
+  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+}
+.cday.sun .num{color:#a45c5c}
+.cday.today .num{
+  width:20px;height:20px;border:1.5px solid #3a3026;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:#3a3026;
+}
+.cday.has{cursor:pointer}
+.cday.sel{
+  background:rgba(176,138,74,.14);
+  border-color:rgba(130,95,50,.45);
+  box-shadow:0 0 0 1px rgba(130,95,50,.12);
+}
+.cday .cref{
+  margin-top:3px;font-size:12px;color:#5a4e40;line-height:1.3;letter-spacing:-.02em;
+  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+}
+.cday .csnip{
+  margin-top:2px;font-size:12px;color:#6b5c4c;line-height:1.35;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  -webkit-text-stroke:calc(1.5px * 12 / 44) var(--paper);
+  word-break:keep-all;
+}
+.collect-detail{
+  flex:0 0 352px;width:352px;
+  padding:14px 16px 18px;
+  border:1px solid rgba(160,120,90,.22);
+  border-radius:4px;
+  background:rgba(255,252,245,.45);
+  align-self:stretch;
+}
+.collect-detail .d-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  margin:0 0 10px;padding-bottom:8px;
+  border-bottom:1px solid var(--header-line);
+}
+.collect-detail .d-date{font-size:20px;color:#3a3026;margin:0;-webkit-text-stroke:calc(1.5px * 20 / 44) var(--paper)}
+.collect-detail .d-sec{margin:0 0 12px}
+.collect-detail .d-ref{font-size:17px;color:#3a3026;margin:0 0 4px}
+.collect-detail .d-verse{
+  font-size:16px;line-height:1.65;color:#2f281f;margin:0 0 2px;
+  -webkit-text-stroke:calc(1.5px * 16 / 44) var(--paper);
+}
+.collect-detail .d-body{
+  font-size:16px;line-height:1.65;color:#3a3026;margin:0;
+  -webkit-text-stroke:calc(1.5px * 16 / 44) var(--paper);
+  word-break:keep-all;
+}
+.collect-detail .d-open{
+  margin-top:8px;border:1px solid var(--btn-border);background:rgba(255,255,255,.4);
+  border-radius:16px;padding:3px 12px;font-size:13px;color:#5a4e40;cursor:pointer;
+}
+
+@media(max-width:700px){
+  .collect-wrap{flex-direction:column;gap:14px;padding:0 0 12px 4px}
+  .collect-filters{padding:0 4px 10px 4px;gap:6px}
+  .collect-filters .tchip{padding:2px 8px;font-size:13px}
+  .collect-note{margin:0 4px 8px}
+  .collect-note-desk{display:none}
+  .collect-note-mob{display:block}
+  .collect-cal{width:100%}
+  .collect-grid{gap:3px}
+  .cday{
+    min-height:54px;padding:4px 2px 3px;align-items:center;text-align:center;gap:1px;
+  }
+  .cday .num{font-size:12px}
+  .cday.today .num{width:18px;height:18px}
+  .cday .cref{
+    margin-top:2px;font-size:10px;text-align:center;letter-spacing:-.04em;line-height:1.2;
+    width:100%;
+  }
+  .cday .csnip{display:none}
+  .cday.has:not(.sel) .cref{color:#6b5c4c}
+  .collect-detail{flex:none;width:auto;padding:12px 12px 14px}
+  .collect-detail .d-date{font-size:18px}
+  .collect-detail .d-body,.collect-detail .d-verse{font-size:16px}
+}
+
+
+/* live app extras */
+.toast{
+  position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(12px);
+  background:#3a3026;color:#f7f4ec;border-radius:16px;padding:8px 16px;
+  font-size:15px;opacity:0;pointer-events:none;transition:.2s;z-index:40;
+  -webkit-text-stroke:0;max-width:90vw;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.user-chip{display:flex;align-items:center;gap:8px}
+.btn-logout{
+  border:0;background:none;color:#8a7a64;font-size:13px;cursor:pointer;padding:0;
+  -webkit-text-stroke:calc(1.5px * 13 / 44) var(--paper);
+}
+.save-dot{font-size:12px;color:#9a8a74;margin-left:6px}
+.pv{cursor:pointer}
+.pv:hover{background:rgba(176,138,74,.08)}
+.passage.empty{color:#9a8a74;padding:18px 8px;font-size:16px}
+.pick-layer,.sheet-layer{z-index:20}
+body.pick-open .pick-layer{display:block}
+body.pick-open-m .sheet-layer{display:block}
+.pick-layer{display:none;position:absolute;inset:0;background:rgba(90,70,45,.12);border-radius:0 10px 10px 0}
+.pick-card{position:absolute;width:540px;max-width:calc(100% - 32px);z-index:21}
+body.pick-open-m .pick-layer{display:none}
+
+.pray-item,.vcard{
+  display:flex;align-items:flex-start;gap:10px;
+}
+.pray-item .p-main{flex:1;min-width:0}
+.pray-item .p-text{font-size:17px;line-height:1.5;color:#3a3026}
+.pray-item .p-meta{font-size:13px;color:#9a8a74;margin-top:2px}
+.pray-item.answered .p-text{color:#6b5c4c}
+.pray-actions{display:flex;gap:6px;flex:0 0 auto}
+.tiny{
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.4);
+  border-radius:16px;padding:2px 10px;font-size:13px;color:#5a4e40;cursor:pointer;white-space:nowrap;
+}
+.ch-grid{
+  display:flex;flex-wrap:wrap;gap:5px;padding:8px 4px 12px 4px;
+}
+.ch-grid button{
+  width:34px;height:28px;border:1px solid var(--btn-border);background:rgba(255,255,255,.35);
+  border-radius:4px;font-size:13px;color:#5a4e40;cursor:pointer;padding:0;
+}
+.ch-grid button.on{background:#3a3026;color:#f7f4ec;border-color:#3a3026;-webkit-text-stroke:0}
+.book-h .cnt.done{color:#3a3026}
+.empty-msg{padding:24px 12px;color:#9a8a74;font-size:16px}
+#bibleLoad{
+  padding:6px 12px;margin:0 8px 8px;font-size:13px;color:#8a7a64;
+}
+.d-open{cursor:pointer}
+.cday.has{cursor:pointer}
+.cday{cursor:default}
+.collect-detail.empty-detail .d-body{color:#9a8a74}
+.attr.hidden,.passage.hidden{display:none}
+@media(max-width:700px){
+  .user-chip .btn-login{max-width:42vw;overflow:hidden;text-overflow:ellipsis}
+}
+.pick-card{background:var(--paper-on) var(--paper-img) center/800px;border:1px solid var(--paper-border);border-radius:10px;box-shadow:0 8px 24px rgba(70,50,25,.16);padding:14px 16px 16px}
+.pick-books{max-height:220px;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.pick-chs,.pick-vs{max-height:220px;overflow:auto;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
+.pick-books .chip{text-align:left;width:100%}
+.pick-sheet .pick-books{max-height:88px;flex-direction:row;flex-wrap:wrap}
+.pick-sheet .pick-chs,.pick-sheet .pick-vs{max-height:120px}
+
+body.pick-open .page, body.pick-open-m .page{overflow:visible}
+textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{color:#b5a894;opacity:1}
+</style>
+</head>
+<body data-view="today">
+<div class="frame">
+  <nav class="tabs" aria-label="탭">
+    <a class="tab c1 on" data-tab="today" href="#today">오늘 묵상</a>
+    <a class="tab c2" data-tab="cal" href="#cal">달력</a>
+    <a class="tab c6" data-tab="collect" href="#collect">모아보기</a>
+    <a class="tab c3" data-tab="pray" href="#pray">기도</a>
+    <a class="tab c4" data-tab="verse" href="#verse">구절</a>
+    <a class="tab c5" data-tab="bible" href="#bible">성경</a>
+  </nav>
+  <div class="notebook">
+    <aside class="bind" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></aside>
+    <div class="page">
+      <header>
+        <h1>dailybread</h1>
+        <div class="header-right">
+          <div class="search-wrap">
+            <input id="searchBox" value="" placeholder="책 이름, 단어" aria-label="검색">
+            <button class="search-btn" type="button" title="검색" aria-label="검색" id="searchBtn">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.3"/><line x1="15.4" y1="15.4" x2="20.5" y2="20.5"/></svg>
+            </button>
+          </div>
+          <div class="user-chip">
+            <button type="button" class="btn-login" id="loginBtn">Google로 로그인</button>
+            <button type="button" class="btn-logout" id="logoutBtn" hidden>로그아웃</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- TODAY -->
+      <div class="view" id="v-today">
+        <div class="toolbar">
+          <div class="date-nav">
+            <button class="nav-btn" type="button" id="prevDay" aria-label="이전 날">‹</button>
+            <div class="date-label" id="todayLabel">—</div>
+            <button class="nav-btn" type="button" id="nextDay" aria-label="다음 날">›</button>
+            <button class="jump" type="button" id="jumpToday">오늘</button>
+            <span class="save-dot" id="saveDot"></span>
+          </div>
+          <div class="wx" id="moodRow"><span class="wlab">오늘 마음</span>
+            <button type="button" data-mood="맑음" class="on">맑음</button>
+            <button type="button" data-mood="흐림">흐림</button>
+            <button type="button" data-mood="비">비</button>
+            <button type="button" data-mood="바람">바람</button>
+          </div>
+          <div class="streak" id="streakBox">
+            <span id="streakLabel">연속 0일</span>
+            <span class="dots" id="streakDots"></span>
+          </div>
+        </div>
+        <div class="stack">
+          <section>
+            <div class="ref-tools">
+              <div>
+                <p class="sec-label">본문</p>
+                <div class="line" id="refLine" style="cursor:pointer">본문을 골라 주세요</div>
+              </div>
+              <span class="tchip on" id="chipKrv" role="button" tabindex="0">개역한글</span>
+              <span class="tchip" id="chipKjv" role="button" tabindex="0">KJV</span>
+              <button type="button" class="pick-btn" id="pickBtn">본문 고르기</button>
+            </div>
+            <div id="bibleLoad" hidden>성경 글을 불러오는 중이에요…</div>
+            <div class="passage empty" id="passage">본문 고르기를 누르면 성경 글이 여기에 나타나요.</div>
+            <p class="attr hidden" id="attrLine">성경전서 개역한글판, 대한성서공회 1961</p>
+          </section>
+          <section>
+            <p class="sec-label">마음에 남는 한 구절</p>
+            <div id="highlightBox" class="passage empty" style="border:none;padding:4px 0">본문에서 구절을 누르면 여기에 담겨요.</div>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">1.</span> 오늘 본문의 내용</p>
+            <textarea class="ruled md" id="f-summary" rows="3" placeholder="오늘 본문이 말하는 내용을 짧게 적어 보세요"></textarea>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">2.</span> 주석에서 찾은 내용</p>
+            <textarea class="ruled md" id="f-notes" rows="3" placeholder="주석에서 마음에 남은 설명을 적어 보세요"></textarea>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">3.</span> 하나님은 어떤 분이신가</p>
+            <textarea class="ruled sm" id="f-whoGod" rows="2" placeholder="본문에서 만난 하나님을 적어 보세요"></textarea>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">4.</span> 느낀 점</p>
+            <textarea class="ruled md" id="f-feeling" rows="3" placeholder="읽고 마음에 남은 점을 적어 보세요"></textarea>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">5.</span> 적용점</p>
+            <textarea class="ruled sm" id="f-apply" rows="2" placeholder="오늘 실천할 것을 적어 보세요"></textarea>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">6.</span> 감사 세가지</p>
+            <div class="thanks">
+              <div class="t-row"><span class="n">1</span><input class="line" id="f-thanks0" placeholder="감사한 일"></div>
+              <div class="t-row"><span class="n">2</span><input class="line" id="f-thanks1" placeholder="감사한 일"></div>
+              <div class="t-row"><span class="n">3</span><input class="line" id="f-thanks2" placeholder="감사한 일"></div>
+            </div>
+          </section>
+          <section>
+            <p class="sec-label"><span class="sec-n">7.</span> 기도</p>
+            <textarea class="ruled sm" id="f-prayer" rows="2" placeholder="하나님께 드리는 기도를 적어 보세요"></textarea>
+          </section>
+        </div>
+      </div>
+
+      <!-- CALENDAR -->
+      <div class="view" id="v-cal">
+        <div class="toolbar">
+          <div class="date-nav">
+            <button class="nav-btn" type="button" id="calPrev" aria-label="이전 달">‹</button>
+            <div class="date-label" id="calLabel">2026년 11월</div>
+            <button class="nav-btn" type="button" id="calNext" aria-label="다음 달">›</button>
+          </div>
+          <div class="streak" id="calStreak"></div>
+        </div>
+        <div class="month-cal" id="calGrid"></div>
+        <p class="cal-note">점이 있는 날을 누르면 그날 묵상이 열려요.</p>
+      </div>
+
+      <!-- COLLECT -->
+      <div class="view" id="v-collect">
+        <div class="toolbar">
+          <div class="date-nav">
+            <button class="nav-btn" type="button" id="colPrev" aria-label="이전 달">‹</button>
+            <div class="date-label" id="colLabel">2026년 11월</div>
+            <button class="nav-btn" type="button" id="colNext" aria-label="다음 달">›</button>
+            <button class="jump" type="button" id="colToday">오늘</button>
+          </div>
+          <div class="streak"><span id="colCount">이번 달 0일 기록</span></div>
+        </div>
+        <div class="collect-filters" id="colFilters">
+          <p class="sec-label">모아 볼 항목</p>
+          <span class="tchip on" data-filter="all">전체</span>
+          <span class="tchip" data-filter="ref">본문</span>
+          <span class="tchip" data-filter="feeling">느낀 점</span>
+          <span class="tchip" data-filter="apply">적용점</span>
+          <span class="tchip" data-filter="prayer">기도</span>
+        </div>
+        <p class="collect-note collect-note-desk">칸을 누르면 오른쪽에 그날의 본문과 기록이 열려요.</p>
+        <p class="collect-note collect-note-mob">칸을 누르면 아래에 그날의 본문과 기록이 열려요.</p>
+        <div class="collect-wrap">
+          <div class="collect-cal">
+            <div class="collect-grid" id="colGrid"></div>
+          </div>
+          <aside class="collect-detail" id="colDetail"></aside>
+        </div>
+      </div>
+
+      <!-- PRAY -->
+      <div class="view" id="v-pray">
+        <div class="toolbar">
+          <div class="date-label" style="font-size:20px">기도 제목</div>
+        </div>
+        <div class="add-bar">
+          <input id="prayInput" placeholder="기도 제목을 적어 주세요">
+          <button type="button" id="prayAdd">적기</button>
+        </div>
+        <div class="list" id="prayOpen"></div>
+        <p class="sec-title" id="prayDoneTitle" hidden>응답된 기도</p>
+        <div class="list" id="prayDone"></div>
+      </div>
+
+      <!-- VERSES -->
+      <div class="view" id="v-verse">
+        <div class="toolbar">
+          <div class="date-label" style="font-size:20px">마음에 남는 구절</div>
+        </div>
+        <div id="verseList"></div>
+      </div>
+
+      <!-- BIBLE -->
+      <div class="view" id="v-bible">
+        <div class="toolbar">
+          <div class="date-label" style="font-size:20px" id="bibleTitle">성경 책별</div>
+          <div class="seg">
+            <button type="button" class="on" id="segBooks">책별</button>
+            <button type="button" id="segRead">통독</button>
+          </div>
+        </div>
+        <div id="bibleByBook"></div>
+        <div id="bibleReading" hidden></div>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="view" id="v-search">
+        <div class="toolbar">
+          <div class="search-head">
+            <span class="q" id="searchQ">검색</span>
+            <span class="n" id="searchN"></span>
+          </div>
+        </div>
+        <div id="searchHits"></div>
+      </div>
+
+    </div>
+    <div class="pick-layer" id="pickLayer" hidden>
+      <div class="pick-card" id="pickCard">
+        <h3 style="margin:0 0 8px;font-size:16px;font-weight:400">본문 고르기</h3>
+        <div class="pick-cols" style="display:grid;grid-template-columns:1.2fr .7fr .9fr;gap:10px">
+          <div>
+            <p class="sec-label">책</p>
+            <div class="books" id="pickBooks" class="pick-books"></div>
+          </div>
+          <div>
+            <p class="sec-label">장</p>
+            <div class="chs" id="pickChs" class="pick-chs"></div>
+          </div>
+          <div>
+            <p class="sec-label">절</p>
+            <div class="vs" id="pickVs" class="pick-vs"></div>
+          </div>
+        </div>
+        <div class="pick-preview" id="pickPreview"></div>
+        <div class="pick-foot">
+          <span class="src" id="pickRange"></span>
+          <button type="button" class="pick-go" id="pickGo">이 본문 넣기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sheet-layer" id="sheetLayer" hidden>
+  <div class="pick-sheet">
+    <div class="handle"></div>
+    <h3>본문 고르기</h3>
+    <div class="pick-cols">
+      <div>
+        <p class="sec-label">책</p>
+        <div class="books" id="pickBooksM" class="pick-books"></div>
+      </div>
+      <div>
+        <p class="sec-label">장</p>
+        <div class="chs" id="pickChsM" class="pick-chs"></div>
+      </div>
+      <div>
+        <p class="sec-label">절</p>
+        <div class="vs" id="pickVsM" class="pick-vs"></div>
+      </div>
+    </div>
+    <div class="pick-preview" id="pickPreviewM"></div>
+    <div class="pick-foot">
+      <span class="src" id="pickRangeM"></span>
+      <button type="button" class="pick-go" id="pickGoM">이 본문 넣기</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
+import {
+  getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect,
+  getRedirectResult, signOut, onAuthStateChanged,
+  setPersistence, browserLocalPersistence, indexedDBLocalPersistence
+} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-auth.js";
+import {
+  initializeFirestore, getFirestore, persistentLocalCache,
+  persistentMultipleTabManager, memoryLocalCache,
+  collection, doc, setDoc, getDoc, getDocs, onSnapshot, writeBatch
+} from "https://www.gstatic.com/firebasejs/13.2.0/firebase-firestore.js";
+
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyAz01u9o0t2CP0c2Z0OIJArte0Ma3Mef5g",
+  authDomain: "personal-7d614.firebaseapp.com",
+  projectId: "personal-7d614",
+  storageBucket: "personal-7d614.firebasestorage.app",
+  messagingSenderId: "1099390253468",
+  appId: "1:1099390253468:web:22e74715cad16514b37059"
+};
+
+const LS_KEY = "dailybread-data";
+const DOW = ["일","월","화","수","목","금","토"];
+const MOODS = ["맑음","흐림","비","바람"];
+const OT_COUNT = 39;
+
+const $ = (id) => document.getElementById(id);
+const qs = (s, el=document) => el.querySelector(s);
+const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+
+function todayISO() {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit"
+  }).format(new Date());
+}
+function addDays(iso, n) {
+  const [y,m,d] = iso.split("-").map(Number);
+  const dt = new Date(y, m-1, d + n);
+  const yy = dt.getFullYear();
+  const mm = String(dt.getMonth()+1).padStart(2,"0");
+  const dd = String(dt.getDate()).padStart(2,"0");
+  return `${yy}-${mm}-${dd}`;
+}
+function parseISO(iso) {
+  const [y,m,d] = iso.split("-").map(Number);
+  return { y, m, d, date: new Date(y, m-1, d), dow: new Date(y, m-1, d).getDay() };
+}
+function dateLabel(iso) {
+  const { m, d, dow } = parseISO(iso);
+  return `${m}월 ${d}일 <em>${DOW[dow]}요일</em>`;
+}
+function monthLabel(y, m) { return `${y}년 ${m}월`; }
+function uidId() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function emptyEntry() {
+  return {
+    book: null, chapter: null, verseStart: null, verseEnd: null,
+    showKrv: true, showKjv: false, highlight: null,
+    summary: "", notes: "", whoGod: "", feeling: "", apply: "",
+    thanks: ["","",""], prayer: "", mood: "맑음", updatedAt: null
+  };
+}
+function emptyData() { return { entries: {}, prayers: [], verses: [], reading: {} }; }
+
+function entryHasContent(e) {
+  if (!e) return false;
+  if (e.book) return true;
+  if ((e.summary||"").trim() || (e.notes||"").trim() || (e.whoGod||"").trim() ||
+      (e.feeling||"").trim() || (e.apply||"").trim() || (e.prayer||"").trim()) return true;
+  if ((e.thanks||[]).some(t => (t||"").trim())) return true;
+  return false;
+}
+
+/* ===== bible ===== */
+const bible = { krv: null, kjv: null };
+const bibleLoading = { krv: null, kjv: null };
+
+async function loadBible(which) {
+  if (bible[which]) return bible[which];
+  if (!bibleLoading[which]) {
+    const file = which === "krv" ? "bible/krv.json" : "bible/kjv.json";
+    bibleLoading[which] = fetch(file).then(r => {
+      if (!r.ok) throw new Error("bible "+r.status);
+      return r.json();
+    }).then(j => { bible[which] = j; return j; });
+  }
+  return bibleLoading[which];
+}
+function books() { return bible.krv ? bible.krv.books : []; }
+function bookByNr(nr) { return books().find(b => b.nr === nr); }
+function bookName(nr) { const b = bookByNr(nr); return b ? b.name : ""; }
+function bookAbbrev(nr) { const b = bookByNr(nr); return b ? b.abbrev : ""; }
+function chapterVerseNums(nr, ch, which="krv") {
+  const src = bible[which];
+  if (!src) return [];
+  const b = src.books.find(x => x.nr === nr);
+  if (!b || !b.chapters[ch-1]) return [];
+  return b.chapters[ch-1].map(v => v[0]);
+}
+function verseText(which, nr, ch, vs) {
+  const src = bible[which];
+  if (!src) return "";
+  const b = src.books.find(x => x.nr === nr);
+  if (!b || !b.chapters[ch-1]) return "";
+  const hit = b.chapters[ch-1].find(v => v[0] === vs);
+  return hit ? hit[1] : "";
+}
+function chapterLength(nr, ch, which="krv") {
+  const nums = chapterVerseNums(nr, ch, which);
+  return nums.length ? nums[nums.length-1] : 0;
+}
+function formatRef(nr, ch, a, b) {
+  const name = bookName(nr) || bookAbbrev(nr);
+  if (!name) return "";
+  if (a === b) return `${name} ${ch}:${a}`;
+  return `${name} ${ch}:${a}-${b}`;
+}
+function formatRefShort(nr, ch, a, b) {
+  const ab = bookAbbrev(nr);
+  if (!ab) return "";
+  if (a === b) return `${ab} ${ch}:${a}`;
+  return `${ab} ${ch}:${a}-${b}`;
+}
+
+/* ===== state ===== */
+let view = "today";
+let currentDate = todayISO();
+let calYear, calMonth, colYear, colMonth;
+{
+  const t = parseISO(currentDate);
+  calYear = colYear = t.y; calMonth = colMonth = t.m;
+}
+let collectFilter = "all";
+let collectSel = null;
+let bibleSeg = "books";
+let data = loadLocal();
+let currentUser = null;
+let applyingCloud = false;
+let saveTimer = null;
+let cloudTimer = null;
+let dirty = false;
+let picker = { book: 19, chapter: 23, start: 1, end: 6, picking: "start" };
+
+function loadLocal() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if (!raw || typeof raw !== "object") return emptyData();
+    return {
+      entries: raw.entries || {},
+      prayers: Array.isArray(raw.prayers) ? raw.prayers : [],
+      verses: Array.isArray(raw.verses) ? raw.verses : [],
+      reading: raw.reading && typeof raw.reading === "object" ? raw.reading : {}
+    };
+  } catch (e) { return emptyData(); }
+}
+function saveLocal() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {}
+}
+function getEntry(iso) {
+  return data.entries[iso] ? { ...emptyEntry(), ...data.entries[iso], thanks: [...(data.entries[iso].thanks || ["","",""])] } : emptyEntry();
+}
+function putEntry(iso, entry) {
+  if (!entryHasContent(entry)) {
+    delete data.entries[iso];
+  } else {
+    entry.updatedAt = new Date().toISOString();
+    data.entries[iso] = entry;
+  }
+  saveLocal();
+  scheduleCloud();
+}
+
+/* ===== firebase ===== */
+let fbApp = null, fbAuth = null, fbDb = null, fbReady = false;
+let entriesUnsub = null, metaUnsub = null;
+
+try {
+  fbApp = initializeApp(FIREBASE_CONFIG);
+  fbAuth = getAuth(fbApp);
+  try {
+    setPersistence(fbAuth, indexedDBLocalPersistence)
+      .catch(() => setPersistence(fbAuth, browserLocalPersistence))
+      .catch(() => {});
+  } catch (e) {}
+  try {
+    fbDb = initializeFirestore(fbApp, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
+  } catch (e1) {
+    try { fbDb = initializeFirestore(fbApp, { localCache: memoryLocalCache() }); }
+    catch (e2) { fbDb = getFirestore(fbApp); }
+  }
+  fbReady = true;
+} catch (err) {
+  console.warn("Firebase 초기화에 실패해 이 브라우저에만 저장해요.", err);
+}
+
+function entriesCol(uid) { return collection(fbDb, "users", uid, "dailybreadEntries"); }
+function entryRef(uid, date) { return doc(fbDb, "users", uid, "dailybreadEntries", String(date)); }
+function metaRef(uid) { return doc(fbDb, "users", uid, "data", "dailybread"); }
+
+function scheduleCloud() {
+  dirty = true;
+  if (fbReady && currentUser) $("saveDot").textContent = "저장 중";
+  clearTimeout(cloudTimer);
+  cloudTimer = setTimeout(flushCloud, 700);
+}
+async function flushCloud() {
+  saveLocal();
+  $("saveDot").textContent = "저장됨";
+  setTimeout(() => { if ($("saveDot").textContent === "저장됨") $("saveDot").textContent = ""; }, 1600);
+  if (!fbReady || !currentUser || applyingCloud) return;
+  const uid = currentUser.uid;
+  try {
+    const e = getEntry(currentDate);
+    if (entryHasContent(e)) await setDoc(entryRef(uid, currentDate), e);
+    else await setDoc(entryRef(uid, currentDate), { deleted: true, updatedAt: new Date().toISOString() });
+    await setDoc(metaRef(uid), {
+      prayers: data.prayers,
+      verses: data.verses,
+      reading: data.reading,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    dirty = false;
+  } catch (err) {
+    console.warn(err);
+    toast(friendlyError(err));
+  }
+}
+
+function mergeData(local, cloudEntries, cloudMeta) {
+  const out = emptyData();
+  const dates = new Set([...Object.keys(local.entries||{}), ...Object.keys(cloudEntries||{})]);
+  dates.forEach(d => {
+    const a = local.entries[d], b = cloudEntries[d];
+    if (b && b.deleted && (!a || !a.updatedAt || (b.updatedAt||"") >= (a.updatedAt||""))) return;
+    if (a && b) out.entries[d] = ((a.updatedAt||"") >= (b.updatedAt||"")) ? a : b;
+    else out.entries[d] = a || b;
+    if (out.entries[d] && out.entries[d].deleted) delete out.entries[d];
+  });
+  const byId = new Map();
+  [...(cloudMeta.prayers||[]), ...(local.prayers||[])].forEach(p => {
+    if (!p || !p.id) return;
+    const prev = byId.get(p.id);
+    if (!prev || (p.updatedAt||p.answeredAt||p.createdAt||"") >= (prev.updatedAt||prev.answeredAt||prev.createdAt||"")) byId.set(p.id, p);
+  });
+  out.prayers = [...byId.values()].sort((a,b) => (a.createdAt||"").localeCompare(b.createdAt||""));
+  const vId = new Map();
+  [...(cloudMeta.verses||[]), ...(local.verses||[])].forEach(v => {
+    if (!v || !v.id) return;
+    vId.set(v.id, v);
+  });
+  out.verses = [...vId.values()];
+  out.reading = { ...(cloudMeta.reading||{}) };
+  Object.keys(local.reading||{}).forEach(k => {
+    const set = new Set([...(out.reading[k]||[]), ...(local.reading[k]||[])]);
+    out.reading[k] = [...set].sort((a,b)=>a-b);
+  });
+  return out;
+}
+
+function listenCloud(uid) {
+  if (entriesUnsub) entriesUnsub();
+  if (metaUnsub) metaUnsub();
+  const cloudEntries = {};
+  let meta = { prayers:[], verses:[], reading:{} };
+  const apply = () => {
+    const active = document.activeElement;
+    const editing = dirty || (active && String(active.id||"").startsWith("f-"));
+    const keepDate = currentDate;
+    const keepEntry = editing ? gatherTodayForm() : null;
+    applyingCloud = true;
+    data = mergeData(data, cloudEntries, meta);
+    if (keepEntry && entryHasContent(keepEntry)) data.entries[keepDate] = keepEntry;
+    saveLocal();
+    if (!editing) render();
+    applyingCloud = false;
+  };
+  entriesUnsub = onSnapshot(entriesCol(uid), snap => {
+    snap.forEach(docu => { cloudEntries[docu.id] = docu.data(); });
+    // also remove gone
+    const ids = new Set(snap.docs.map(d => d.id));
+    Object.keys(cloudEntries).forEach(k => { if (!ids.has(k)) delete cloudEntries[k]; });
+    apply();
+  }, err => console.warn(err));
+  metaUnsub = onSnapshot(metaRef(uid), snap => {
+    if (snap.exists()) meta = snap.data();
+    apply();
+  }, err => console.warn(err));
+}
+
+function friendlyError(err) {
+  const code = (err && err.code) || "";
+  const map = {
+    "auth/unauthorized-domain": "이 주소가 Firebase 승인된 도메인에 등록되지 않았어요.",
+    "auth/popup-blocked": "로그인 팝업이 차단되었어요.",
+    "auth/popup-closed-by-user": "로그인을 취소했어요.",
+    "auth/cancelled-popup-request": "로그인 창이 이미 열려 있어요.",
+    "auth/network-request-failed": "네트워크 연결을 확인해 주세요.",
+    "auth/operation-not-allowed": "Google 로그인이 Firebase에서 아직 켜져 있지 않아요.",
+    "permission-denied": "저장 권한이 없어요. 로그인 상태를 확인해 주세요.",
+    "unavailable": "네트워크를 확인해 주세요. 연결되면 자동으로 동기화돼요."
+  };
+  if (map[code]) return map[code];
+  return "문제가 생겼어요. 잠시 후 다시 시도해 주세요." + (code ? " ("+code+")" : "");
+}
+function toast(msg, ms) {
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => el.classList.remove("show"), ms || 2800);
+}
+
+async function doLogin() {
+  if (!fbReady) { toast("지금은 이 기기에만 저장돼요."); return; }
+  const provider = new GoogleAuthProvider();
+  try {
+    await signInWithPopup(fbAuth, provider);
+  } catch (err) {
+    if (err.code === "auth/popup-blocked" || err.code === "auth/operation-not-supported-in-this-environment") {
+      try { await signInWithRedirect(fbAuth, provider); return; } catch (e2) { toast(friendlyError(e2)); return; }
+    }
+    if (err.code === "auth/popup-closed-by-user" || err.code === "auth/cancelled-popup-request") return;
+    toast(friendlyError(err));
+  }
+}
+async function doLogout() {
+  try { if (fbAuth) await signOut(fbAuth); } catch (e) {}
+}
+
+function setAuthUi(user) {
+  currentUser = user;
+  const btn = $("loginBtn"), out = $("logoutBtn");
+  if (user) {
+    btn.textContent = user.displayName || user.email || "로그인됨";
+    btn.disabled = true;
+    out.hidden = false;
+  } else {
+    btn.textContent = "Google로 로그인";
+    btn.disabled = false;
+    out.hidden = true;
+  }
+}
+
+if (fbReady) {
+  getRedirectResult(fbAuth).catch(() => {});
+  onAuthStateChanged(fbAuth, user => {
+    setAuthUi(user);
+    if (user) listenCloud(user.uid);
+    else {
+      if (entriesUnsub) entriesUnsub();
+      if (metaUnsub) metaUnsub();
+    }
+  });
+}
+
+/* ===== streak ===== */
+function streakInfo() {
+  const today = todayISO();
+  let start = today;
+  if (!entryHasContent(data.entries[today])) start = addDays(today, -1);
+  let n = 0, d = start;
+  while (entryHasContent(data.entries[d])) { n++; d = addDays(d, -1); }
+  const dots = [];
+  for (let i = 7; i >= 0; i--) {
+    const iso = addDays(today, -i);
+    dots.push({ iso, on: entryHasContent(data.entries[iso]), today: iso === today });
+  }
+  return { n, dots };
+}
+
+/* ===== render today ===== */
+function currentEntry() { return getEntry(currentDate); }
+
+function fillTodayForm() {
+  const e = currentEntry();
+  $("todayLabel").innerHTML = dateLabel(currentDate);
+  qsa("#moodRow [data-mood]").forEach(b => b.classList.toggle("on", b.dataset.mood === (e.mood || "맑음")));
+  $("refLine").textContent = e.book ? formatRef(e.book, e.chapter, e.verseStart, e.verseEnd) : "본문을 골라 주세요";
+  $("chipKrv").classList.toggle("on", e.showKrv !== false);
+  $("chipKjv").classList.toggle("on", !!e.showKjv);
+  $("f-summary").value = e.summary || "";
+  $("f-notes").value = e.notes || "";
+  $("f-whoGod").value = e.whoGod || "";
+  $("f-feeling").value = e.feeling || "";
+  $("f-apply").value = e.apply || "";
+  $("f-prayer").value = e.prayer || "";
+  for (let i=0;i<3;i++) $("f-thanks"+i).value = (e.thanks && e.thanks[i]) || "";
+  renderStreak();
+  renderPassage();
+}
+function gatherTodayForm() {
+  const e = currentEntry();
+  e.mood = qs("#moodRow [data-mood].on")?.dataset.mood || "맑음";
+  e.showKrv = $("chipKrv").classList.contains("on");
+  e.showKjv = $("chipKjv").classList.contains("on");
+  e.summary = $("f-summary").value;
+  e.notes = $("f-notes").value;
+  e.whoGod = $("f-whoGod").value;
+  e.feeling = $("f-feeling").value;
+  e.apply = $("f-apply").value;
+  e.prayer = $("f-prayer").value;
+  e.thanks = [0,1,2].map(i => $("f-thanks"+i).value);
+  return e;
+}
+function autosaveToday() {
+  const e = gatherTodayForm();
+  putEntry(currentDate, e);
+  $("saveDot").textContent = "저장됨";
+  clearTimeout(autosaveToday._t);
+  autosaveToday._t = setTimeout(() => { if ($("saveDot").textContent === "저장됨") $("saveDot").textContent = ""; }, 1200);
+  renderStreak();
+}
+
+function renderStreak() {
+  const s = streakInfo();
+  $("streakLabel").textContent = s.n ? `연속 ${s.n}일` : "연속 0일";
+  $("streakDots").innerHTML = s.dots.map(d =>
+    `<span class="dot${d.on?" on":""}${d.today?" today":""}"></span>`
+  ).join("");
+  $("calStreak").innerHTML = $("streakBox").innerHTML;
+}
+
+async function renderPassage() {
+  const e = currentEntry();
+  const box = $("passage"), attr = $("attrLine"), load = $("bibleLoad");
+  if (!e.book) {
+    box.className = "passage empty";
+    box.textContent = "본문 고르기를 누르면 성경 글이 여기에 나타나요.";
+    attr.classList.add("hidden");
+    $("highlightBox").className = "passage empty";
+    $("highlightBox").style.border = "none";
+    $("highlightBox").style.padding = "4px 0";
+    $("highlightBox").textContent = "본문에서 구절을 누르면 여기에 담겨요.";
+    return;
+  }
+  const needKrv = e.showKrv !== false;
+  const needKjv = !!e.showKjv;
+  try {
+    load.hidden = false;
+    if (needKrv) await loadBible("krv");
+    if (needKjv) await loadBible("kjv");
+  } catch (err) {
+    load.hidden = true;
+    box.className = "passage empty";
+    box.textContent = "성경 글을 불러오지 못했어요. 파일을 함께 올렸는지 확인해 주세요.";
+    return;
+  }
+  load.hidden = true;
+  const nums = [];
+  for (let v = e.verseStart; v <= e.verseEnd; v++) nums.push(v);
+  const both = needKrv && needKjv;
+  const rows = nums.map(v => {
+    const ko = needKrv ? verseText("krv", e.book, e.chapter, v) : "";
+    const en = needKjv ? verseText("kjv", e.book, e.chapter, v) : "";
+    if (!ko && !en) return "";
+    const hi = e.highlight === v ? " hi" : "";
+    const starred = isStarred(e.book, e.chapter, v);
+    let body;
+    if (both) {
+      body = `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`;
+    } else {
+      body = `<span class="vt">${esc(ko || en)}</span>`;
+    }
+    return `<div class="pv${hi}" data-verse="${v}"><span class="vn">${v}</span>${body}<span class="star${starred?" on":""}" data-star="${v}" title="구절 모음에 담기">★</span></div>`;
+  }).join("");
+  box.className = "passage";
+  box.innerHTML = rows || `<div class="passage empty">이 범위에 해당하는 구절을 찾지 못했어요.</div>`;
+  const parts = [];
+  if (needKrv) parts.push("성경전서 개역한글판, 대한성서공회 1961");
+  if (needKjv) parts.push("King James Version");
+  attr.textContent = parts.join("  ·  ");
+  attr.classList.toggle("hidden", !parts.length);
+  renderHighlight();
+}
+function renderHighlight() {
+  const e = currentEntry();
+  const box = $("highlightBox");
+  if (!e.book || !e.highlight) {
+    box.className = "passage empty";
+    box.style.border = "none";
+    box.style.padding = "4px 0";
+    box.textContent = "본문에서 구절을 누르면 여기에 담겨요.";
+    return;
+  }
+  const v = e.highlight;
+  const ko = e.showKrv !== false ? verseText("krv", e.book, e.chapter, v) : "";
+  const en = e.showKjv ? verseText("kjv", e.book, e.chapter, v) : "";
+  const starred = isStarred(e.book, e.chapter, v);
+  const body = (e.showKrv !== false && e.showKjv)
+    ? `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`
+    : `<span class="vt">${esc(ko || en)}</span>`;
+  box.className = "";
+  box.style.border = "none";
+  box.style.padding = "0";
+  box.innerHTML = `<div class="pv hi" style="padding:8px 6px" data-verse="${v}"><span class="vn">${v}</span>${body}<span class="star${starred?" on":""}" data-star="${v}">★</span></div>`;
+}
+function esc(s) {
+  return String(s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+}
+
+/* ===== verses collection ===== */
+function verseKey(nr,ch,v){ return `${nr}:${ch}:${v}`; }
+function isStarred(nr,ch,v){
+  return data.verses.some(x => x.book===nr && x.chapter===ch && x.verse===v);
+}
+function toggleStar(nr,ch,v){
+  const i = data.verses.findIndex(x => x.book===nr && x.chapter===ch && x.verse===v);
+  if (i >= 0) data.verses.splice(i,1);
+  else {
+    data.verses.unshift({
+      id: uidId(), book: nr, chapter: ch, verse: v,
+      textKrv: verseText("krv", nr, ch, v) || "",
+      textKjv: verseText("kjv", nr, ch, v) || "",
+      date: currentDate, addedAt: new Date().toISOString()
+    });
+  }
+  saveLocal(); scheduleCloud();
+  renderPassage();
+  if (view === "verse") renderVerses();
+}
+
+/* ===== calendar ===== */
+function daysInMonth(y,m){ return new Date(y,m,0).getDate(); }
+function renderCalendar() {
+  $("calLabel").textContent = monthLabel(calYear, calMonth);
+  const firstDow = new Date(calYear, calMonth-1, 1).getDay();
+  const n = daysInMonth(calYear, calMonth);
+  const today = todayISO();
+  let html = DOW.map((d,i)=>`<div class="m-dow${i===0?" sun":""}">${d}</div>`).join("");
+  for (let i=0;i<firstDow;i++) html += `<div class="mday mute"></div>`;
+  for (let d=1; d<=n; d++) {
+    const iso = `${calYear}-${String(calMonth).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const e = data.entries[iso];
+    const has = entryHasContent(e);
+    const dow = (firstDow + d - 1) % 7;
+    const cls = ["mday", dow===0?"sun":"", iso===today?"today":"", has?"has":""].filter(Boolean).join(" ");
+    let mark = "";
+    if (has && e.book) mark = `<span class="mark"></span><span class="ref">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span>`;
+    else if (has) mark = `<span class="mark"></span>`;
+    html += `<div class="${cls}" data-iso="${iso}"><span class="num">${d}</span>${mark}</div>`;
+  }
+  $("calGrid").innerHTML = html;
+}
+
+/* ===== collect ===== */
+function snippetOf(e, filter) {
+  if (filter === "feeling") return (e.feeling||"").trim();
+  if (filter === "apply") return (e.apply||"").trim();
+  if (filter === "prayer") return (e.prayer||"").trim();
+  if (filter === "ref") return "";
+  return (e.feeling||e.apply||e.prayer||e.summary||"").trim();
+}
+function renderCollect() {
+  $("colLabel").textContent = monthLabel(colYear, colMonth);
+  const firstDow = new Date(colYear, colMonth-1, 1).getDay();
+  const n = daysInMonth(colYear, colMonth);
+  const today = todayISO();
+  let count = 0;
+  let html = DOW.map((d,i)=>`<div class="c-dow${i===0?" sun":""}">${d}</div>`).join("");
+  for (let i=0;i<firstDow;i++) html += `<div class="cday mute"></div>`;
+  for (let d=1; d<=n; d++) {
+    const iso = `${colYear}-${String(colMonth).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const e = data.entries[iso];
+    const has = entryHasContent(e);
+    if (has) count++;
+    const dow = (firstDow + d - 1) % 7;
+    const sel = collectSel === iso || (!collectSel && has && iso === (data.entries[today] ? today : collectSel));
+    const cls = ["cday", dow===0?"sun":"", iso===today?"today":"", has?"has":"", iso===collectSel?"sel":""].filter(Boolean).join(" ");
+    let extra = "";
+    if (has && e.book) extra += `<span class="cref">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span>`;
+    if (has && collectFilter !== "ref") {
+      const sn = snippetOf(e, collectFilter);
+      if (sn) extra += `<span class="csnip">${esc(sn)}</span>`;
+    }
+    html += `<div class="${cls}" data-iso="${iso}"><span class="num">${d}</span>${extra}</div>`;
+  }
+  const lead = (firstDow + n) % 7;
+  const rest = lead === 0 ? 0 : 7-lead;
+  for (let d=1; d<=rest; d++) html += `<div class="cday mute"><span class="num">${d}</span></div>`;
+  $("colGrid").innerHTML = html;
+  $("colCount").textContent = `이번 달 ${count}일 기록`;
+  if (!collectSel || !collectSel.startsWith(`${colYear}-${String(colMonth).padStart(2,"0")}`)) {
+    // keep selection if in month; else pick latest entry in month or today
+    const inMonth = Object.keys(data.entries).filter(k => k.startsWith(`${colYear}-${String(colMonth).padStart(2,"0")}`) && entryHasContent(data.entries[k])).sort();
+    if (collectSel && inMonth.includes(collectSel)) {}
+    else if (inMonth.includes(today)) collectSel = today;
+    else collectSel = inMonth[inMonth.length-1] || today;
+    // re-mark sel
+    qsa("#colGrid .cday").forEach(el => el.classList.toggle("sel", el.dataset.iso === collectSel));
+  }
+  renderCollectDetail();
+}
+function renderCollectDetail() {
+  const iso = collectSel;
+  const box = $("colDetail");
+  const e = iso ? data.entries[iso] : null;
+  if (!iso || !entryHasContent(e)) {
+    box.className = "collect-detail empty-detail";
+    const { m,d,dow } = iso ? parseISO(iso) : parseISO(todayISO());
+    box.innerHTML = `<div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#7a6b58">${DOW[dow]}요일</em></p></div>
+      <p class="d-body">아직 기록이 없어요.</p>`;
+    return;
+  }
+  const { m,d,dow } = parseISO(iso);
+  const ref = e.book ? formatRef(e.book, e.chapter, e.verseStart, e.verseEnd) : "";
+  const verse = (e.book && e.highlight) ? (verseText("krv", e.book, e.chapter, e.highlight) || verseText("kjv", e.book, e.chapter, e.highlight)) : (e.book ? verseText("krv", e.book, e.chapter, e.verseStart) : "");
+  box.className = "collect-detail";
+  box.innerHTML = `
+    <div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#7a6b58">${DOW[dow]}요일</em></p></div>
+    <div class="d-sec"><p class="sec-label">본문</p><p class="d-ref">${esc(ref) || "본문 없음"}</p>${verse?`<p class="d-verse">${esc(verse)}</p>`:""}</div>
+    <div class="d-sec"><p class="sec-label">느낀 점</p><p class="d-body">${esc((e.feeling||"").trim()) || "아직 적지 않았어요."}</p></div>
+    <div class="d-sec"><p class="sec-label">적용점</p><p class="d-body">${esc((e.apply||"").trim()) || "아직 적지 않았어요."}</p></div>
+    <div class="d-sec"><p class="sec-label">기도</p><p class="d-body">${esc((e.prayer||"").trim()) || "아직 적지 않았어요."}</p></div>
+    <button type="button" class="d-open" id="openDayBtn">그날 묵상 열기</button>`;
+}
+
+/* ===== prayers / verses / bible / search ===== */
+function renderPrayers() {
+  const open = data.prayers.filter(p => !p.answered);
+  const done = data.prayers.filter(p => p.answered);
+  const item = (p) => `<div class="pray-item${p.answered?" answered":""}" data-id="${p.id}">
+    <div class="p-main"><div class="p-text">${esc(p.text)}</div>
+    <div class="p-meta">${p.answered ? `응답 · ${fmtShort(p.answeredAt || p.createdAt)}` : fmtShort(p.createdAt)}</div></div>
+    <div class="pray-actions">${p.answered?"":`<button type="button" class="tiny" data-ans="${p.id}">응답</button>`}
+    <button type="button" class="tiny" data-del="${p.id}">삭제</button></div>
+  </div>`;
+  $("prayOpen").innerHTML = open.length ? open.map(item).join("") : `<p class="empty-msg">기도 제목을 적어 보세요.</p>`;
+  $("prayDoneTitle").hidden = done.length === 0;
+  $("prayDone").innerHTML = done.map(item).join("");
+}
+function fmtShort(iso) {
+  if (!iso) return "";
+  const d = iso.slice(0,10);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) {
+    try { return todayISO(); } catch(e){ return ""; }
+  }
+  const { m, day } = { m: +d.slice(5,7), day: +d.slice(8,10) };
+  return `${m}월 ${day}일`;
+}
+function renderVerses() {
+  if (!data.verses.length) {
+    $("verseList").innerHTML = `<p class="empty-msg">본문 옆의 ★을 누르면 여기에 모아요.</p>`;
+    return;
+  }
+  $("verseList").innerHTML = data.verses.map(v => {
+    const ref = formatRef(v.book, v.chapter, v.verse, v.verse);
+    const text = v.textKrv || v.textKjv || "";
+    return `<div class="vcard" data-id="${v.id}">
+      <div class="vtop"><span class="vref">${esc(ref)}</span><span class="vdate">${v.date ? fmtShort(v.date) : ""}</span></div>
+      <div class="vtxt">${esc(text)}</div>
+      <button type="button" class="star on" data-unstar="${v.id}" title="모음에서 빼기">★</button>
+    </div>`;
+  }).join("");
+}
+function renderBible() {
+  const reading = bibleSeg === "read";
+  $("segBooks").classList.toggle("on", !reading);
+  $("segRead").classList.toggle("on", reading);
+  $("bibleTitle").textContent = reading ? "통독 진도" : "성경 책별";
+  $("bibleByBook").hidden = reading;
+  $("bibleReading").hidden = !reading;
+  if (!reading) renderByBook();
+  else renderReading();
+}
+function renderByBook() {
+  const groups = new Map();
+  Object.entries(data.entries).forEach(([iso,e]) => {
+    if (!entryHasContent(e) || !e.book) return;
+    if (!groups.has(e.book)) groups.set(e.book, []);
+    groups.get(e.book).push({ iso, e });
+  });
+  if (!groups.size) {
+    $("bibleByBook").innerHTML = `<p class="empty-msg">본문을 고르고 묵상을 적으면 책별로 모여요.</p>`;
+    return;
+  }
+  const nrs = [...groups.keys()].sort((a,b)=>a-b);
+  $("bibleByBook").innerHTML = nrs.map(nr => {
+    const list = groups.get(nr).sort((a,b)=>b.iso.localeCompare(a.iso));
+    const name = bookName(nr);
+    const entries = list.map(({iso,e}) => {
+      const { m,d } = parseISO(iso);
+      return `<div class="ent" data-iso="${iso}"><span class="dt">${m}월 ${d}일</span><span class="rf">${esc(formatRefShort(e.book,e.chapter,e.verseStart,e.verseEnd))}</span><span class="sn">${esc((e.feeling||e.summary||"").trim())}</span></div>`;
+    }).join("");
+    return `<div class="book open"><div class="book-h"><span class="nm">${esc(name)}</span><span class="cnt">${list.length}일</span></div><div class="entries">${entries}</div></div>`;
+  }).join("");
+}
+function renderReading() {
+  if (!bible.krv) {
+    $("bibleReading").innerHTML = `<p class="empty-msg">성경 글을 불러온 뒤에 통독 표가 열려요.</p>`;
+    loadBible("krv").then(() => { if (bibleSeg==="read") renderReading(); }).catch(()=>{});
+    return;
+  }
+  const totalCh = bible.krv.books.reduce((n,b)=>n+b.chapters.length,0);
+  let doneCh = 0;
+  bible.krv.books.forEach(b => { doneCh += (data.reading[String(b.nr)]||[]).length; });
+  const pct = totalCh ? (doneCh / totalCh * 100) : 0;
+  const booksHtml = [true, false].map(isOt => {
+    const list = bible.krv.books.filter(b => isOt ? b.nr<=OT_COUNT : b.nr>OT_COUNT);
+    const label = isOt ? "구약" : "신약";
+    return `<p class="group-label">${label}</p>` + list.map(b => {
+      const got = new Set(data.reading[String(b.nr)]||[]);
+      const n = b.chapters.length;
+      const c = [...got].filter(x => x>=1 && x<=n).length;
+      const st = c===n ? "done" : c>0 ? "doing" : "";
+      const mark = c===n ? "마침" : c>0 ? `${c}/${n}` : "아직";
+      const chs = Array.from({length:n}, (_,i) => {
+        const ch=i+1;
+        return `<button type="button" class="${got.has(ch)?"on":""}" data-read="${b.nr}:${ch}">${ch}</button>`;
+      }).join("");
+      return `<div class="book ${st} open" data-bnr="${b.nr}">
+        <div class="book-h"><span class="nm">${esc(b.name)}</span><span class="cnt ${c===n?"done":""}">${mark}</span></div>
+        <div class="entries"><div class="ch-grid">${chs}</div></div>
+      </div>`;
+    }).join("");
+  }).join("");
+  $("bibleReading").innerHTML = `<div class="prog-wrap">
+    <div class="prog-top"><span class="big">${doneCh} / ${totalCh}장</span><span class="sub">통독 진도 ${pct.toFixed(1).replace(/\.0$/,"")}%</span></div>
+    <div class="bar"><i style="width:${pct}%"></i></div>
+  </div>${booksHtml}`;
+}
+
+function renderSearch(q) {
+  const query = (q||"").trim();
+  $("searchQ").textContent = query ? `검색 · ${query}` : "검색";
+  const hits = [];
+  if (query) {
+    const qlow = query.toLowerCase();
+    const match = (s) => (s||"").toLowerCase().includes(qlow) || (s||"").includes(query);
+    Object.entries(data.entries).forEach(([iso,e]) => {
+      if (!entryHasContent(e)) return;
+      const ref = e.book ? formatRef(e.book,e.chapter,e.verseStart,e.verseEnd) : "";
+      const fields = [ref, e.summary, e.notes, e.whoGod, e.feeling, e.apply, e.prayer, ...(e.thanks||[])];
+      const hit = fields.find(f => match(f));
+      if (hit) hits.push({ type:"entry", iso, ref, text: hit, date: iso });
+    });
+    data.prayers.forEach(p => {
+      if (match(p.text)) hits.push({ type:"pray", iso: (p.createdAt||"").slice(0,10), ref:"기도", text: p.text });
+    });
+    data.verses.forEach(v => {
+      const ref = formatRef(v.book,v.chapter,v.verse,v.verse);
+      if (match(ref) || match(v.textKrv) || match(v.textKjv))
+        hits.push({ type:"verse", iso: v.date, ref, text: v.textKrv || v.textKjv || "" });
+    });
+    hits.sort((a,b) => (b.iso||"").localeCompare(a.iso||""));
+  }
+  $("searchN").textContent = query ? `${hits.length}개` : "";
+  if (!query) { $("searchHits").innerHTML = `<p class="empty-msg">책 이름이나 단어를 적어 보세요.</p>`; return; }
+  if (!hits.length) { $("searchHits").innerHTML = `<p class="empty-msg">찾는 내용이 없어요.</p>`; return; }
+  $("searchHits").innerHTML = hits.map(h => {
+    const snippet = highlightQ(h.text, query);
+    return `<div class="hit" data-iso="${h.iso||""}" data-type="${h.type}">
+      <div class="htop"><span class="href">${esc(h.ref||"")}</span><span class="hdate">${h.iso?fmtShort(h.iso):""}</span></div>
+      <div class="htxt">${snippet}</div>
+    </div>`;
+  }).join("");
+}
+function highlightQ(text, q) {
+  const s = esc(text||"");
+  const safe = q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return s.replace(new RegExp(safe, "gi"), m => `<mark>${m}</mark>`);
+}
+
+/* ===== picker ===== */
+function isMobile() { return window.matchMedia("(max-width:700px)").matches; }
+function openPicker() {
+  const e = currentEntry();
+  if (e.book) {
+    picker.book = e.book; picker.chapter = e.chapter;
+    picker.start = e.verseStart; picker.end = e.verseEnd;
+  } else if (!picker.book) {
+    picker.book = 19; picker.chapter = 23; picker.start = 1; picker.end = 6;
+  }
+  picker.picking = "start";
+  const mob = isMobile();
+  document.body.classList.toggle("pick-open", !mob);
+  document.body.classList.toggle("pick-open-m", mob);
+  $("pickLayer").hidden = mob;
+  $("sheetLayer").hidden = !mob;
+  renderPicker();
+  if (!mob) placePickCard();
+}
+function closePicker() {
+  document.body.classList.remove("pick-open","pick-open-m");
+  $("pickLayer").hidden = true;
+  $("sheetLayer").hidden = true;
+}
+function placePickCard() {
+  const btn = $("pickBtn"), card = $("pickCard"), layer = $("pickLayer");
+  const br = btn.getBoundingClientRect(), lr = layer.getBoundingClientRect();
+  let left = br.left - lr.left - 8;
+  if (left + 540 > lr.width - 24) left = Math.max(16, lr.width - 564);
+  if (left < 16) left = 16;
+  card.style.left = left + "px";
+  card.style.top = (br.bottom - lr.top + 8) + "px";
+}
+function renderPicker() {
+  if (!bible.krv) {
+    $("bibleLoad").hidden = false;
+    loadBible("krv").then(() => { $("bibleLoad").hidden = true; renderPicker(); }).catch(() => {
+      $("bibleLoad").hidden = true; toast("성경 글을 불러오지 못했어요.");
+    });
+    return;
+  }
+  const ids = isMobile() ? { books:"pickBooksM", chs:"pickChsM", vs:"pickVsM", prev:"pickPreviewM", range:"pickRangeM" }
+                         : { books:"pickBooks", chs:"pickChs", vs:"pickVs", prev:"pickPreview", range:"pickRange" };
+  const bks = books();
+  $(ids.books).innerHTML = bks.map(b =>
+    `<button type="button" class="chip${b.nr===picker.book?" on":""}" data-book="${b.nr}">${esc(b.name)}</button>`
+  ).join("");
+  const book = bookByNr(picker.book) || bks[0];
+  picker.book = book.nr;
+  const nCh = book.chapters.length;
+  if (picker.chapter > nCh) picker.chapter = 1;
+  $(ids.chs).innerHTML = Array.from({length:nCh}, (_,i) => {
+    const ch=i+1;
+    return `<button type="button" class="chip${ch===picker.chapter?" on":""}" data-ch="${ch}">${ch}</button>`;
+  }).join("");
+  const last = chapterLength(picker.book, picker.chapter, "krv") || 1;
+  if (picker.start > last) picker.start = 1;
+  if (picker.end > last || picker.end < picker.start) picker.end = last;
+  $(ids.vs).innerHTML = Array.from({length:last}, (_,i) => {
+    const v=i+1;
+    const on = v>=picker.start && v<=picker.end;
+    return `<button type="button" class="chip${on?" on":""}" data-vs="${v}">${v}</button>`;
+  }).join("");
+  const ref = formatRef(picker.book, picker.chapter, picker.start, picker.end);
+  $(ids.range).textContent = ref;
+  const ko1 = verseText("krv", picker.book, picker.chapter, picker.start);
+  $(ids.prev).innerHTML = ko1 ? `<b>${esc(ref)}</b><div>${esc(ko1)}</div>` : "";
+}
+async function applyPicker() {
+  const e = gatherTodayForm();
+  e.book = picker.book;
+  e.chapter = picker.chapter;
+  e.verseStart = picker.start;
+  e.verseEnd = picker.end;
+  if (e.highlight && (e.highlight < e.verseStart || e.highlight > e.verseEnd)) e.highlight = null;
+  putEntry(currentDate, e);
+  closePicker();
+  fillTodayForm();
+  try { await loadBible("krv"); if (e.showKjv) await loadBible("kjv"); } catch(ex){}
+  renderPassage();
+}
+
+/* ===== navigation / render ===== */
+function setView(name) {
+  if (name !== "search") closeSearchMode(false);
+  view = name;
+  document.body.dataset.view = name === "read" ? "bible" : name;
+  if (name === "read") document.body.dataset.view = "bible";
+  qsa(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === (name==="read"?"bible":name) && name !== "search"));
+  if (name === "search") qsa(".tab").forEach(t => t.classList.remove("on"));
+  render();
+}
+function render() {
+  if (view === "today") fillTodayForm();
+  if (view === "cal") renderCalendar();
+  if (view === "collect") renderCollect();
+  if (view === "pray") renderPrayers();
+  if (view === "verse") renderVerses();
+  if (view === "bible" || view === "read") renderBible();
+  if (view === "search") renderSearch($("searchBox").value);
+}
+function goToDate(iso) {
+  if (view === "today") gatherTodayForm() && putEntry(currentDate, gatherTodayForm());
+  currentDate = iso;
+  const { y,m } = parseISO(iso);
+  calYear = colYear = y; calMonth = colMonth = m;
+  collectSel = iso;
+  setView("today");
+}
+function closeSearchMode(reset) {
+  $("searchBox").classList.remove("open");
+  if (reset) $("searchBox").value = "";
+}
+
+/* ===== events ===== */
+qsa(".tab").forEach(t => t.addEventListener("click", ev => {
+  ev.preventDefault();
+  setView(t.dataset.tab);
+}));
+$("prevDay").onclick = () => goToDate(addDays(currentDate, -1));
+$("nextDay").onclick = () => goToDate(addDays(currentDate, 1));
+$("jumpToday").onclick = () => goToDate(todayISO());
+$("calPrev").onclick = () => { calMonth--; if (calMonth<1){calMonth=12;calYear--;} renderCalendar(); };
+$("calNext").onclick = () => { calMonth++; if (calMonth>12){calMonth=1;calYear++;} renderCalendar(); };
+$("colPrev").onclick = () => { colMonth--; if (colMonth<1){colMonth=12;colYear--;} renderCollect(); };
+$("colNext").onclick = () => { colMonth++; if (colMonth>12){colMonth=1;colYear++;} renderCollect(); };
+$("colToday").onclick = () => {
+  const t = parseISO(todayISO());
+  colYear=t.y; colMonth=t.m; collectSel=todayISO(); renderCollect();
+};
+qsa("#moodRow [data-mood]").forEach(b => b.addEventListener("click", () => {
+  qsa("#moodRow [data-mood]").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+  autosaveToday();
+}));
+["f-summary","f-notes","f-whoGod","f-feeling","f-apply","f-prayer","f-thanks0","f-thanks1","f-thanks2"].forEach(id => {
+  $(id).addEventListener("input", autosaveToday);
+});
+$("chipKrv").onclick = () => {
+  const e = gatherTodayForm();
+  if (e.showKrv && !e.showKjv) { e.showKjv = true; }
+  e.showKrv = !e.showKrv;
+  if (!e.showKrv && !e.showKjv) e.showKjv = true;
+  putEntry(currentDate, e); fillTodayForm();
+};
+$("chipKjv").onclick = () => {
+  const e = gatherTodayForm();
+  e.showKjv = !e.showKjv;
+  if (!e.showKrv && !e.showKjv) e.showKrv = true;
+  putEntry(currentDate, e); fillTodayForm();
+};
+$("pickBtn").onclick = openPicker;
+$("refLine").onclick = openPicker;
+$("pickLayer").addEventListener("click", ev => { if (ev.target.id === "pickLayer") closePicker(); });
+$("sheetLayer").addEventListener("click", ev => { if (ev.target.id === "sheetLayer") closePicker(); });
+$("pickGo").onclick = applyPicker;
+$("pickGoM").onclick = applyPicker;
+function onPickClick(ev) {
+  const book = ev.target.closest("[data-book]");
+  const ch = ev.target.closest("[data-ch]");
+  const vs = ev.target.closest("[data-vs]");
+  if (book) {
+    picker.book = +book.dataset.book; picker.chapter = 1; picker.start = 1;
+    picker.end = chapterLength(picker.book, 1, "krv") || 1;
+    picker.picking = "start";
+    renderPicker(); return;
+  }
+  if (ch) {
+    picker.chapter = +ch.dataset.ch; picker.start = 1;
+    picker.end = chapterLength(picker.book, picker.chapter, "krv") || 1;
+    picker.picking = "start";
+    renderPicker(); return;
+  }
+  if (vs) {
+    const v = +vs.dataset.vs;
+    if (picker.picking === "start" || v < picker.start) {
+      picker.start = v; picker.end = v; picker.picking = "end";
+    } else {
+      picker.end = v; picker.picking = "start";
+    }
+    renderPicker();
+  }
+}
+$("pickCard").addEventListener("click", onPickClick);
+$("sheetLayer").addEventListener("click", onPickClick);
+
+$("passage").addEventListener("click", onVerseClick);
+$("highlightBox").addEventListener("click", onVerseClick);
+function onVerseClick(ev) {
+  const star = ev.target.closest("[data-star]");
+  const pv = ev.target.closest(".pv");
+  const e = currentEntry();
+  if (!e.book) return;
+  if (star) {
+    ev.stopPropagation();
+    toggleStar(e.book, e.chapter, +star.dataset.star);
+    return;
+  }
+  if (pv && pv.dataset.verse) {
+    e.highlight = +pv.dataset.verse;
+    putEntry(currentDate, e);
+    renderPassage();
+  }
+}
+
+$("calGrid").addEventListener("click", ev => {
+  const day = ev.target.closest("[data-iso]");
+  if (day) goToDate(day.dataset.iso);
+});
+$("colGrid").addEventListener("click", ev => {
+  const day = ev.target.closest("[data-iso]");
+  if (!day || !day.dataset.iso) return;
+  collectSel = day.dataset.iso;
+  renderCollect();
+});
+$("colFilters").addEventListener("click", ev => {
+  const chip = ev.target.closest("[data-filter]");
+  if (!chip) return;
+  collectFilter = chip.dataset.filter;
+  qsa("#colFilters .tchip").forEach(c => c.classList.toggle("on", c===chip));
+  renderCollect();
+});
+$("colDetail").addEventListener("click", ev => {
+  if (ev.target.id === "openDayBtn" && collectSel) goToDate(collectSel);
+});
+
+$("prayAdd").onclick = addPrayer;
+$("prayInput").addEventListener("keydown", ev => { if (ev.key === "Enter") addPrayer(); });
+function addPrayer() {
+  const text = $("prayInput").value.trim();
+  if (!text) return;
+  data.prayers.unshift({
+    id: uidId(), text, createdAt: todayISO(), answered: false, answeredAt: null, updatedAt: new Date().toISOString()
+  });
+  $("prayInput").value = "";
+  saveLocal(); scheduleCloud(); renderPrayers();
+}
+$("v-pray").addEventListener("click", ev => {
+  const ans = ev.target.closest("[data-ans]");
+  const del = ev.target.closest("[data-del]");
+  if (ans) {
+    const p = data.prayers.find(x => x.id === ans.dataset.ans);
+    if (p) { p.answered = true; p.answeredAt = todayISO(); p.updatedAt = new Date().toISOString(); }
+    saveLocal(); scheduleCloud(); renderPrayers();
+  }
+  if (del) {
+    data.prayers = data.prayers.filter(x => x.id !== del.dataset.del);
+    saveLocal(); scheduleCloud(); renderPrayers();
+  }
+});
+$("verseList").addEventListener("click", ev => {
+  const un = ev.target.closest("[data-unstar]");
+  if (!un) return;
+  data.verses = data.verses.filter(x => x.id !== un.dataset.unstar);
+  saveLocal(); scheduleCloud(); renderVerses(); renderPassage();
+});
+$("segBooks").onclick = () => { bibleSeg = "books"; renderBible(); };
+$("segRead").onclick = () => { bibleSeg = "read"; renderBible(); };
+$("bibleByBook").addEventListener("click", ev => {
+  const h = ev.target.closest(".book-h");
+  if (h) { h.parentElement.classList.toggle("open"); return; }
+  const ent = ev.target.closest("[data-iso]");
+  if (ent) goToDate(ent.dataset.iso);
+});
+$("bibleReading").addEventListener("click", ev => {
+  const h = ev.target.closest(".book-h");
+  if (h) { ev.preventDefault(); h.parentElement.classList.toggle("open"); return; }
+  const btn = ev.target.closest("[data-read]");
+  if (!btn) return;
+  const [nr, ch] = btn.dataset.read.split(":").map(Number);
+  const key = String(nr);
+  const arr = new Set(data.reading[key] || []);
+  if (arr.has(ch)) arr.delete(ch); else arr.add(ch);
+  data.reading[key] = [...arr].sort((a,b)=>a-b);
+  saveLocal(); scheduleCloud(); renderReading();
+});
+
+$("searchBtn").onclick = () => {
+  $("searchBox").classList.add("open");
+  $("searchBox").focus();
+  if (view !== "search") setView("search");
+};
+$("searchBox").addEventListener("focus", () => {
+  $("searchBox").classList.add("open");
+  if (view !== "search") setView("search");
+});
+$("searchBox").addEventListener("input", () => {
+  if (view !== "search") setView("search");
+  renderSearch($("searchBox").value);
+});
+$("searchHits").addEventListener("click", ev => {
+  const hit = ev.target.closest(".hit");
+  if (hit && hit.dataset.iso && hit.dataset.type !== "pray") goToDate(hit.dataset.iso);
+});
+
+$("loginBtn").onclick = doLogin;
+$("logoutBtn").onclick = doLogout;
+
+document.addEventListener("keydown", ev => {
+  if (ev.key === "Escape") closePicker();
+});
+
+/* ===== boot ===== */
+function boot() {
+  fillTodayForm();
+  loadBible("krv").then(() => {
+    if (currentEntry().book) renderPassage();
+  }).catch(() => {
+    $("bibleLoad").hidden = true;
+  });
+  // prefetch kjv quietly if last entry used it
+  if (currentEntry().showKjv) loadBible("kjv").catch(()=>{});
+}
+
+window.__dailybread = {
+  todayISO, get data() { return data; }, get date() { return currentDate; },
+  setView, goToDate, getEntry,
+  async setPassage(nr, ch, a, b, opts={}) {
+    await loadBible("krv");
+    if (opts.kjv) await loadBible("kjv");
+    const e = gatherTodayForm();
+    e.book = nr; e.chapter = ch; e.verseStart = a; e.verseEnd = b;
+    if (opts.kjv) e.showKjv = true;
+    if (opts.krv === false) e.showKrv = false;
+    putEntry(currentDate, e);
+    fillTodayForm();
+    await renderPassage();
+    return e;
+  },
+  loadBible, flushCloud, saveLocal, autosaveToday, formatRef, verseText,
+  toast
+};
+
+boot();
+
+</script>
+</body>
+</html>
