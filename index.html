@@ -51,12 +51,14 @@ button,input,textarea{font-family:inherit;color:inherit}
 
 /* ===== index tabs ===== */
 .tabs{
-  display:flex;align-items:flex-end;gap:5px;
+  display:flex;align-items:flex-end;justify-content:flex-end;gap:5px;
   padding-left:56px;margin:0 8px -1px;position:relative;z-index:3;
   flex-wrap:wrap;
 }
+.tabs::before{content:"";flex:1 1 0;min-width:0}
 .tab{
   display:inline-flex;align-items:center;justify-content:center;
+  flex:0 0 auto;
   min-width:86px;padding:7px 16px 9px;
   background:var(--paper-tab) var(--paper-img) center/800px;
   border:1px solid var(--tab-border);
@@ -407,9 +409,13 @@ body[data-view=picker-m] #v-today-a{display:block}
 .seg button.on{background:#3a3026;color:#f3e7cf;-webkit-text-stroke:0}
 
 @media(max-width:700px){
-  .tabs{padding-left:34px;gap:3px;margin-left:2px}
-  .tabs{padding-left:28px;gap:2px}
-  .tab{min-width:0;padding:6px 6px 8px;font-size:13px;letter-spacing:-.02em}
+  .tabs{
+    padding-left:28px;gap:2px;margin-left:2px;
+    flex-wrap:nowrap;justify-content:flex-start;
+    overflow-x:auto;overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;scrollbar-width:thin;
+  }
+  .tab{min-width:0;flex:0 0 auto;padding:6px 8px 8px;font-size:13px;letter-spacing:-.02em}
   .tab.on{padding-top:8px;padding-bottom:9px}
   .notebook{min-height:calc(100vh - 48px);border-radius:3px 8px 8px 4px}
   .bind{flex-basis:28px;width:28px;margin-left:-6px;padding:16px 0}
@@ -719,8 +725,14 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   background:#3a3026;color:#f7f4ec;border-radius:16px;padding:8px 16px;
   font-size:15px;opacity:0;pointer-events:none;transition:.2s;z-index:40;
   -webkit-text-stroke:0;max-width:90vw;
+  display:flex;align-items:center;gap:8px;
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.toast-act{
+  border:0;background:none;color:#f3e2b8;font:inherit;font-weight:700;
+  cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px;
+  white-space:nowrap;-webkit-text-stroke:0;
+}
 .user-chip{display:flex;align-items:center;gap:8px}
 .btn-logout{
   border:0;background:none;color:#5a4e40;font-size:13px;cursor:pointer;padding:0;
@@ -745,8 +757,26 @@ body.pick-open-m .pick-layer{display:none}
 .pray-item .p-main{flex:1;min-width:0}
 .pray-item .p-text{font-size:17px;line-height:1.5;color:#3a3026}
 .pray-item .p-meta{font-size:13px;color:#6b5c4c;margin-top:2px}
-.pray-item.answered .p-text{color:#6b5c4c}
-.pray-actions{display:flex;gap:6px;flex:0 0 auto}
+.pray-item.answered{
+  background:rgba(150,125,95,.10);
+  border-radius:8px;padding:8px 8px 8px 10px;
+  border-left:3px solid rgba(120,90,60,.45);
+}
+.pray-item.answered .p-text{color:#5a4e40}
+.pray-done-wrap{margin-top:6px;padding-bottom:8px}
+.pray-divider{
+  display:flex;align-items:center;gap:10px;
+  margin:16px 8px 12px;
+}
+.pray-divider-line{
+  flex:1;height:1px;background:rgba(90,70,45,.35);
+}
+.pray-divider-label{
+  flex:0 0 auto;font-size:16px;font-weight:700;color:#3a3026;
+  letter-spacing:.01em;white-space:nowrap;
+  -webkit-text-stroke:0;
+}
+.pray-actions{display:flex;gap:6px;flex:0 0 auto;flex-wrap:wrap;justify-content:flex-end}
 .tiny{
   border:1px solid var(--btn-border);background:rgba(255,255,255,.4);
   border-radius:16px;padding:2px 10px;font-size:13px;color:#5a4e40;cursor:pointer;white-space:nowrap;
@@ -1037,8 +1067,14 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
           <button type="button" id="prayAdd">적기</button>
         </div>
         <div class="list" id="prayOpen"></div>
-        <p class="sec-title" id="prayDoneTitle" hidden>응답된 기도</p>
-        <div class="list" id="prayDone"></div>
+        <div class="pray-done-wrap" id="prayDoneWrap" hidden>
+          <div class="pray-divider" id="prayDoneTitle">
+            <span class="pray-divider-line" aria-hidden="true"></span>
+            <span class="pray-divider-label" id="prayDoneLabel">응답된 기도</span>
+            <span class="pray-divider-line" aria-hidden="true"></span>
+          </div>
+          <div class="list" id="prayDone"></div>
+        </div>
       </div>
 
       <!-- VERSES -->
@@ -1126,7 +1162,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
     </div>
   </div>
 </div>
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status"><span id="toastMsg"></span><button type="button" class="toast-act" id="toastAction" hidden></button></div>
 
 <div class="confirm-layer" id="confirmLayer" hidden>
   <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
@@ -1566,12 +1602,38 @@ function friendlyError(err) {
   if (map[code]) return map[code];
   return "문제가 생겼어요. 잠시 후 다시 시도해 주세요." + (code ? " ("+code+")" : "");
 }
-function toast(msg, ms) {
+function toast(msg, ms, action) {
   const el = $("toast");
-  el.textContent = msg;
-  el.classList.add("show");
+  const msgEl = $("toastMsg");
+  const btn = $("toastAction");
+  if (msgEl) msgEl.textContent = msg;
+  else el.textContent = msg;
   clearTimeout(toast._t);
-  toast._t = setTimeout(() => el.classList.remove("show"), ms || 2800);
+  if (btn) {
+    if (action && action.label && action.onClick) {
+      btn.hidden = false;
+      btn.textContent = action.label;
+      btn.onclick = ev => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        hideToast();
+        action.onClick();
+      };
+    } else {
+      btn.hidden = true;
+      btn.onclick = null;
+      btn.textContent = "";
+    }
+  }
+  el.classList.add("show");
+  toast._t = setTimeout(hideToast, ms || 2800);
+}
+function hideToast() {
+  const el = $("toast");
+  const btn = $("toastAction");
+  el.classList.remove("show");
+  if (btn) { btn.hidden = true; btn.onclick = null; }
+  clearTimeout(toast._t);
 }
 
 async function doLogin() {
@@ -1894,16 +1956,43 @@ function renderCollectDetail() {
 /* ===== prayers / verses / bible / search ===== */
 function renderPrayers() {
   const open = data.prayers.filter(p => !p.answered);
-  const done = data.prayers.filter(p => p.answered);
+  const done = data.prayers.filter(p => p.answered).slice().sort((a,b) =>
+    String(b.answeredAt||b.updatedAt||"").localeCompare(String(a.answeredAt||a.updatedAt||""))
+  );
   const item = (p) => `<div class="pray-item${p.answered?" answered":""}" data-id="${p.id}">
     <div class="p-main"><div class="p-text">${esc(p.text)}</div>
     <div class="p-meta">${p.answered ? `응답 · ${fmtShort(p.answeredAt || p.createdAt)}` : fmtShort(p.createdAt)}</div></div>
-    <div class="pray-actions">${p.answered?"":`<button type="button" class="tiny" data-ans="${p.id}">응답</button>`}
+    <div class="pray-actions">${p.answered
+      ? `<button type="button" class="tiny" data-undo="${p.id}">다시 기도제목으로</button>`
+      : `<button type="button" class="tiny" data-ans="${p.id}">응답</button>`}
     <button type="button" class="tiny" data-del="${p.id}">삭제</button></div>
   </div>`;
   $("prayOpen").innerHTML = open.length ? open.map(item).join("") : `<p class="empty-msg">기도 제목을 적어 보세요.</p>`;
-  $("prayDoneTitle").hidden = done.length === 0;
+  const wrap = $("prayDoneWrap");
+  if (wrap) wrap.hidden = done.length === 0;
+  const label = $("prayDoneLabel") || $("prayDoneTitle");
+  if (label) label.textContent = `응답된 기도 (${done.length})`;
   $("prayDone").innerHTML = done.map(item).join("");
+}
+function setPrayerAnswered(id, answered) {
+  const p = data.prayers.find(x => x.id === id);
+  if (!p) return false;
+  if (!!p.answered === !!answered) return false;
+  p.answered = !!answered;
+  p.answeredAt = answered ? todayISO() : null;
+  p.updatedAt = new Date().toISOString();
+  saveLocal();
+  scheduleCloud();
+  renderPrayers();
+  return true;
+}
+function markPrayerAnswered(id) {
+  if (!setPrayerAnswered(id, true)) return false;
+  toast("응답된 기도로 옮겼어요 ·", 7000, {
+    label: "되돌리기",
+    onClick: () => setPrayerAnswered(id, false)
+  });
+  return true;
 }
 function fmtShort(iso) {
   if (!iso) return "";
@@ -2504,11 +2593,15 @@ function addPrayer() {
 }
 $("v-pray").addEventListener("click", ev => {
   const ans = ev.target.closest("[data-ans]");
+  const undo = ev.target.closest("[data-undo]");
   const del = ev.target.closest("[data-del]");
   if (ans) {
-    const p = data.prayers.find(x => x.id === ans.dataset.ans);
-    if (p) { p.answered = true; p.answeredAt = todayISO(); p.updatedAt = new Date().toISOString(); }
-    saveLocal(); scheduleCloud(); renderPrayers();
+    markPrayerAnswered(ans.dataset.ans);
+    return;
+  }
+  if (undo) {
+    setPrayerAnswered(undo.dataset.undo, false);
+    return;
   }
   if (del) {
     data.prayers = data.prayers.filter(x => x.id !== del.dataset.del);
@@ -2596,6 +2689,7 @@ window.__dailybread = {
   loadBible, flushCloud, saveLocal, autosaveToday, formatRef, formatPassageRef, formatEntryRefs,
   verseText, openPicker, migrateEntry, entryPassages, entryHighlights, getEntry,
   requestDeleteEntry, deleteEntry, askDeleteConfirm,
+  renderPrayers, setPrayerAnswered, markPrayerAnswered, toast, hideToast,
   verseFromDeletedEntry, entryVerseKeys,
   get pendingDeletes() { return pendingDeletes; },
   get pendingRemovedVerseIds() { return pendingRemovedVerseIds; },
