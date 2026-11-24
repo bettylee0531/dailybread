@@ -466,16 +466,25 @@ body[data-view=picker-m] #v-today-a{display:block}
 }
 .trans-tag{border-style:dashed;cursor:default}
 
+#passageBlocks.has-passages{
+  max-height:min(420px, 44vh);
+  overflow-y:auto;
+  padding-right:4px;
+  margin:0 0 4px;
+  border-top:1px solid var(--header-line);
+  border-bottom:1px solid var(--header-line);
+}
+#passageBlocks.has-passages .pass-block .passage{border:none;margin:0;padding:4px 4px 8px}
 .passage{
   margin:0 0 6px;padding:8px 4px 10px;
   border-top:1px solid var(--header-line);border-bottom:1px solid var(--header-line);
 }
-.pv{display:flex;gap:10px;align-items:flex-start;padding:3px 4px;border-radius:3px}
+.pv{display:flex;gap:10px;align-items:flex-start;padding:3px 4px;border-radius:3px;cursor:pointer}
 .pv .vn{flex:0 0 18px;font-size:13px;color:#6b5c4c;padding-top:3px;text-align:right}
 .pv .vt{flex:1;font-size:17px;line-height:1.7;color:#2f281f}
 .pv.hi{background:rgba(176,138,74,.12)}
 .pv.hi .vt{color:#3a3026}
-.pv .star{font-size:16px;padding:2px 0 0;color:#b08a4a}
+.pv .star{font-size:16px;padding:2px 0 0;color:#b08a4a;line-height:1;cursor:pointer;user-select:none}
 .attr{margin:6px 4px 0;font-size:12px;color:#5a4e40;letter-spacing:.01em;-webkit-text-stroke:0}
 
 .qsec{margin-top:2px}
@@ -547,7 +556,11 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   border-radius:16px 16px 0 0;
   box-shadow:0 -8px 24px rgba(70,50,25,.16);
   padding:8px 16px 18px;
+  max-height:min(92vh, 760px);
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
+.pick-sheet .pick-vs-head{position:sticky;top:0;z-index:1;background:var(--paper-on)}
 .pick-sheet .handle{width:40px;height:4px;border-radius:2px;background:#d4cbb8;margin:4px auto 10px}
 .pick-sheet h3{margin:0 0 8px;font-size:16px;font-weight:400}
 .pick-sheet .pick-cols{grid-template-columns:1fr;gap:8px}
@@ -621,7 +634,21 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 .collect-note{margin:0 8px 12px;font-size:13px;color:#6b5c4c;-webkit-text-stroke:0}
 .collect-note-mob{display:none}
 .collect-wrap{display:flex;align-items:stretch;gap:18px;padding:0 8px 16px 8px}
+.collect-wrap.cal-only .collect-detail{display:none}
 .collect-cal{flex:1;min-width:0}
+.collect-detail.collect-list{overflow-y:auto;max-height:min(640px, calc(100vh - 260px))}
+.collect-item{
+  padding:10px 0 12px;border-bottom:1px solid rgba(160,120,90,.2);
+}
+.collect-item:last-child{border-bottom:none}
+.collect-item .d-date{font-size:17px;color:#3a3026;margin:0 0 4px;-webkit-text-stroke:0}
+.collect-item .d-ref{font-size:15px;color:#3a3026;margin:0 0 6px}
+.collect-item .d-text{
+  font-size:15px;line-height:1.65;color:#3a3026;margin:0 0 8px;
+  max-height:8.2em;overflow-y:auto;white-space:pre-wrap;word-break:keep-all;
+  -webkit-text-stroke:0;
+}
+.collect-item .d-text.empty{color:#6b5c4c}
 .collect-grid{
   display:grid;grid-template-columns:repeat(7,1fr);gap:4px;
 }
@@ -647,6 +674,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   width:20px;height:20px;border:1.5px solid #3a3026;border-radius:50%;
   display:flex;align-items:center;justify-content:center;color:#3a3026;
 }
+.cday[data-iso]{cursor:pointer}
 .cday.has{cursor:pointer}
 .cday.sel{
   background:rgba(176,138,74,.14);
@@ -694,6 +722,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
 }
 
 @media(max-width:700px){
+  #passageBlocks.has-passages{max-height:min(260px, 36vh)}
   .collect-wrap{flex-direction:column;gap:14px;padding:0 0 12px 4px}
   .collect-filters{padding:0 4px 10px 4px;gap:6px}
   .collect-filters .tchip{padding:2px 8px;font-size:13px}
@@ -714,6 +743,7 @@ body[data-view=picker] .page, body[data-view=picker-m] .page{overflow:visible}
   .cday .csnip{display:none}
   .cday.has:not(.sel) .cref{color:#6b5c4c}
   .collect-detail{flex:none;width:auto;padding:12px 12px 14px}
+  .collect-detail.collect-list{max-height:min(420px, 52vh)}
   .collect-detail .d-date{font-size:18px}
   .collect-detail .d-body,.collect-detail .d-verse{font-size:16px}
 }
@@ -804,7 +834,14 @@ body.pick-open-m .pick-layer{display:none}
 }
 .pick-card{background:var(--paper-on) var(--paper-img) center/800px;border:1px solid var(--paper-border);border-radius:10px;box-shadow:0 8px 24px rgba(70,50,25,.16);padding:14px 16px 16px}
 .pick-books{max-height:220px;overflow:auto;display:block;padding-right:2px;-webkit-overflow-scrolling:touch}
-.pick-chs,.pick-vs{max-height:220px;overflow:auto;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
+.pick-vs-head{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.pick-all{
+  border:1px solid var(--btn-border);background:rgba(255,255,255,.45);
+  border-radius:12px;padding:1px 8px;font-size:12px;color:#3a3026;cursor:pointer;
+  -webkit-text-stroke:0;white-space:nowrap;font-weight:400;
+}
+.pick-all.on{background:#3a3026;color:#f7f4ec;border-color:#3a3026}
+.pick-chs,.pick-vs{max-height:220px;overflow:auto;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;user-select:none}
 .pick-group{margin:0 0 8px}
 .pick-group:last-child{margin-bottom:0}
 .pick-group-label{
@@ -960,7 +997,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
           </section>
           <section>
             <p class="sec-label">마음에 남는 구절</p>
-            <div id="highlightBox" class="passage empty" style="border:none;padding:4px 0">본문에서 구절을 누르면 여러 개를 담을 수 있어요.</div>
+            <div id="highlightBox" class="passage empty" style="border:none;padding:4px 0">본문의 구절을 누르면 마음에 남는 구절에 담겨요.</div>
           </section>
           <section>
             <p class="sec-label"><span class="sec-n">1.</span> 오늘 본문의 내용</p>
@@ -983,15 +1020,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
             <textarea class="ruled sm" id="f-apply" rows="2" placeholder="오늘 실천할 것을 적어 보세요"></textarea>
           </section>
           <section>
-            <p class="sec-label"><span class="sec-n">6.</span> 감사 세가지</p>
-            <div class="thanks">
-              <div class="t-row"><span class="n">1</span><input class="line" id="f-thanks0" placeholder="감사한 일"></div>
-              <div class="t-row"><span class="n">2</span><input class="line" id="f-thanks1" placeholder="감사한 일"></div>
-              <div class="t-row"><span class="n">3</span><input class="line" id="f-thanks2" placeholder="감사한 일"></div>
-            </div>
-          </section>
-          <section>
-            <p class="sec-label"><span class="sec-n">7.</span> 기도</p>
+            <p class="sec-label"><span class="sec-n">6.</span> 기도</p>
             <textarea class="ruled sm" id="f-prayer" rows="2" placeholder="하나님께 드리는 기도를 적어 보세요"></textarea>
           </section>
         </div>
@@ -1047,8 +1076,8 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
           <span class="tchip" data-filter="apply">적용점</span>
           <span class="tchip" data-filter="prayer">기도</span>
         </div>
-        <p class="collect-note collect-note-desk">칸을 누르면 오른쪽에 그날의 본문과 기록이 열려요.</p>
-        <p class="collect-note collect-note-mob">칸을 누르면 아래에 그날의 본문과 기록이 열려요.</p>
+        <p class="collect-note collect-note-desk" id="colNoteDesk">날짜를 누르면 기록이 열려요. 같은 날을 다시 누르면 달력만 보여요.</p>
+        <p class="collect-note collect-note-mob" id="colNoteMob">날짜를 누르면 아래에 기록이 열려요. 같은 날을 다시 누르면 달력만 보여요.</p>
         <div class="collect-wrap">
           <div class="collect-cal">
             <div class="collect-grid" id="colGrid"></div>
@@ -1123,7 +1152,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
             <div class="pick-chs" id="pickChs"></div>
           </div>
           <div>
-            <p class="sec-label">절</p>
+            <p class="sec-label pick-vs-head">절 <button type="button" class="pick-all" id="pickAll">전체선택</button></p>
             <div class="pick-vs" id="pickVs"></div>
           </div>
         </div>
@@ -1151,7 +1180,7 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
         <div class="pick-chs" id="pickChsM"></div>
       </div>
       <div>
-        <p class="sec-label">절</p>
+        <p class="sec-label pick-vs-head">절 <button type="button" class="pick-all" id="pickAllM">전체선택</button></p>
         <div class="pick-vs" id="pickVsM"></div>
       </div>
     </div>
@@ -1709,7 +1738,6 @@ function fillTodayForm() {
   $("f-feeling").value = e.feeling || "";
   $("f-apply").value = e.apply || "";
   $("f-prayer").value = e.prayer || "";
-  for (let i=0;i<3;i++) $("f-thanks"+i).value = (e.thanks && e.thanks[i]) || "";
   const has = entryHasContent(e);
   $("editActions").hidden = !has;
   renderStreak();
@@ -1726,7 +1754,6 @@ function gatherTodayForm() {
   e.feeling = $("f-feeling").value;
   e.apply = $("f-apply").value;
   e.prayer = $("f-prayer").value;
-  e.thanks = [0,1,2].map(i => $("f-thanks"+i).value);
   return e;
 }
 function autosaveToday() {
@@ -1737,6 +1764,14 @@ function autosaveToday() {
   clearTimeout(autosaveToday._t);
   autosaveToday._t = setTimeout(() => { if ($("saveDot").textContent === "저장됨") $("saveDot").textContent = ""; }, 1200);
   renderStreak();
+}
+function scheduleSaveConfirm() {
+  clearTimeout(scheduleSaveConfirm._t);
+  scheduleSaveConfirm._t = setTimeout(() => {
+    if (suppressSave || view !== "today-edit") return;
+    autosaveToday();
+    toast("저장되었습니다", 1500);
+  }, 1500);
 }
 
 function renderStreak() {
@@ -1753,11 +1788,13 @@ async function renderPassage() {
   const box = $("passageBlocks"), attr = $("attrLine"), load = $("bibleLoad");
   const ps = entryPassages(e);
   if (!ps.length) {
+    box.classList.remove("has-passages");
     box.innerHTML = `<div class="passage empty">아래 ‘+ 본문 추가’를 누르면 성경 글이 여기에 나타나요.</div>`;
     attr.classList.add("hidden");
     renderHighlight();
     return;
   }
+  box.classList.add("has-passages");
   const needKrv = e.showKrv !== false;
   const needKjv = !!e.showKjv;
   try {
@@ -1794,22 +1831,33 @@ function verseRowHtml(e, book, ch, v, needKrv, needKjv, both, withStar) {
   const en = needKjv ? verseText("kjv", book, ch, v) : "";
   if (!ko && !en) return "";
   const hi = isHighlighted(e, book, ch, v) ? " hi" : "";
-  const starred = isStarred(book, ch, v);
   const body = both
     ? `<div class="vt-col"><span class="vt">${esc(ko)}</span>${en?`<span class="vt en">${esc(en)}</span>`:""}</div>`
     : `<span class="vt">${esc(ko || en)}</span>`;
-  const star = withStar ? `<span class="star${starred?" on":""}" data-star="${v}" data-book="${book}" data-chapter="${ch}" title="구절 모음에 담기">★</span>` : "";
+  const star = withStar ? `<span class="star${hi?" on":""}" aria-hidden="true">${hi?"★":"☆"}</span>` : "";
   return `<div class="pv${hi}" data-verse="${v}" data-book="${book}" data-chapter="${ch}"><span class="vn">${v}</span>${body}${star}</div>`;
+}
+function sortHighlights(hs, e) {
+  const ps = entryPassages(e || currentEntry());
+  const key = (h) => {
+    const pi = ps.findIndex(p => p.book===h.book && p.chapter===h.chapter && (p.verses||[]).includes(h.verse));
+    return [pi >= 0 ? pi : 999, h.book||0, h.chapter||0, h.verse||0];
+  };
+  return (hs||[]).slice().sort((a,b) => {
+    const ka = key(a), kb = key(b);
+    for (let i=0;i<ka.length;i++) if (ka[i]!==kb[i]) return ka[i]-kb[i];
+    return 0;
+  });
 }
 function renderHighlight() {
   const e = currentEntry();
   const box = $("highlightBox");
-  const hs = entryHighlights(e);
+  const hs = sortHighlights(entryHighlights(e), e);
   if (!hs.length) {
     box.className = "passage empty";
     box.style.border = "none";
     box.style.padding = "4px 0";
-    box.textContent = "본문에서 구절을 누르면 여러 개를 담을 수 있어요.";
+    box.textContent = "본문의 구절을 누르면 마음에 남는 구절에 담겨요.";
     return;
   }
   const needKrv = e.showKrv !== false, needKjv = !!e.showKjv, both = needKrv && needKjv;
@@ -1883,6 +1931,27 @@ function snippetOf(e, filter) {
   if (filter === "ref") return "";
   return (e.feeling||e.apply||e.prayer||e.summary||"").trim();
 }
+function collectMonthEntries() {
+  const prefix = `${colYear}-${String(colMonth).padStart(2,"0")}`;
+  return Object.keys(data.entries).filter(k => k.startsWith(prefix) && entryHasContent(getEntry(k))).sort();
+}
+function collectDateLabel(iso) {
+  const { m,d,dow } = parseISO(iso);
+  return `${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#5a4e40">${DOW[dow]}요일</em>`;
+}
+function collectFieldLabel(filter) {
+  return { ref:"본문", feeling:"느낀 점", apply:"적용점", prayer:"기도" }[filter] || "";
+}
+function updateCollectNote() {
+  const all = collectFilter === "all";
+  const desk = $("colNoteDesk"), mob = $("colNoteMob");
+  if (desk) desk.textContent = all
+    ? "날짜를 누르면 기록이 열려요. 같은 날을 다시 누르면 달력만 보여요."
+    : "달력에는 본문 주소가 보이고, 오른쪽에는 날짜별 기록이 모여요.";
+  if (mob) mob.textContent = all
+    ? "날짜를 누르면 아래에 기록이 열려요. 같은 날을 다시 누르면 달력만 보여요."
+    : "달력에는 본문 주소가 보이고, 아래에는 날짜별 기록이 모여요.";
+}
 function renderCollect() {
   $("colLabel").textContent = monthLabel(colYear, colMonth);
   const firstDow = new Date(colYear, colMonth-1, 1).getDay();
@@ -1897,15 +1966,11 @@ function renderCollect() {
     const has = entryHasContent(e);
     if (has) count++;
     const dow = (firstDow + d - 1) % 7;
-    const sel = collectSel === iso || (!collectSel && has && iso === (entryHasContent(getEntry(today)) ? today : collectSel));
     const cls = ["cday", dow===0?"sun":"", iso===today?"today":"", has?"has":"", iso===collectSel?"sel":""].filter(Boolean).join(" ");
     let extra = "";
     const refs = formatEntryRefs(e, true);
-    if (has && refs) extra += `<span class="cref">${esc(refs)}</span>`;
-    if (has && collectFilter !== "ref") {
-      const sn = snippetOf(e, collectFilter);
-      if (sn) extra += `<span class="csnip">${esc(sn)}</span>`;
-    }
+    if (has && refs && (collectFilter !== "all" || collectSel)) extra += `<span class="cref">${esc(refs)}</span>`;
+    else if (has && collectFilter === "all" && !collectSel && refs) extra += `<span class="cref">${esc(refs)}</span>`;
     html += `<div class="${cls}" data-iso="${iso}"><span class="num">${d}</span>${extra}</div>`;
   }
   const lead = (firstDow + n) % 7;
@@ -1913,44 +1978,66 @@ function renderCollect() {
   for (let d=1; d<=rest; d++) html += `<div class="cday mute"><span class="num">${d}</span></div>`;
   $("colGrid").innerHTML = html;
   $("colCount").textContent = `이번 달 ${count}일 기록`;
-  if (!collectSel || !collectSel.startsWith(`${colYear}-${String(colMonth).padStart(2,"0")}`)) {
-    // keep selection if in month; else pick latest entry in month or today
-    const inMonth = Object.keys(data.entries).filter(k => k.startsWith(`${colYear}-${String(colMonth).padStart(2,"0")}`) && entryHasContent(data.entries[k])).sort();
-    if (collectSel && inMonth.includes(collectSel)) {}
-    else if (inMonth.includes(today)) collectSel = today;
-    else collectSel = inMonth[inMonth.length-1] || today;
-    // re-mark sel
-    qsa("#colGrid .cday").forEach(el => el.classList.toggle("sel", el.dataset.iso === collectSel));
-  }
+  updateCollectNote();
   renderCollectDetail();
 }
 function renderCollectDetail() {
-  const iso = collectSel;
   const box = $("colDetail");
-  const e = iso ? getEntry(iso) : null;
-  if (!iso || !entryHasContent(e)) {
-    box.className = "collect-detail empty-detail";
-    const { m,d,dow } = iso ? parseISO(iso) : parseISO(todayISO());
-    box.innerHTML = `<div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#5a4e40">${DOW[dow]}요일</em></p></div>
-      <p class="d-body">아직 기록이 없어요.</p>`;
+  const wrap = box.closest(".collect-wrap") || $("colDetail").parentElement;
+  if (collectFilter === "all") {
+    if (!collectSel) {
+      if (wrap) wrap.classList.add("cal-only");
+      box.className = "collect-detail";
+      box.innerHTML = "";
+      return;
+    }
+    if (wrap) wrap.classList.remove("cal-only");
+    const iso = collectSel;
+    const e = getEntry(iso);
+    if (!entryHasContent(e)) {
+      box.className = "collect-detail empty-detail";
+      box.innerHTML = `<div class="d-head"><p class="d-date">${collectDateLabel(iso)}</p></div>
+        <p class="d-body">아직 기록이 없어요.</p>
+        <button type="button" class="d-open" data-open-day="${iso}">그날 묵상 열기</button>`;
+      return;
+    }
+    const ps = entryPassages(e);
+    const verseHtml = ps.map(p => {
+      const first = p.verses[0];
+      const text = verseText("krv", p.book, p.chapter, first) || verseText("kjv", p.book, p.chapter, first) || "";
+      return `<p class="d-ref">${esc(formatPassageRef(p))}</p>${text?`<p class="d-verse">${esc(text)}</p>`:""}`;
+    }).join("");
+    box.className = "collect-detail";
+    box.innerHTML = `
+      <div class="d-head"><p class="d-date">${collectDateLabel(iso)}</p></div>
+      <div class="d-sec"><p class="sec-label">본문</p>${verseHtml || `<p class="d-ref">본문 없음</p>`}</div>
+      <div class="d-sec"><p class="sec-label">느낀 점</p><p class="d-body">${esc((e.feeling||"").trim()) || "아직 적지 않았어요."}</p></div>
+      <div class="d-sec"><p class="sec-label">적용점</p><p class="d-body">${esc((e.apply||"").trim()) || "아직 적지 않았어요."}</p></div>
+      <div class="d-sec"><p class="sec-label">기도</p><p class="d-body">${esc((e.prayer||"").trim()) || "아직 적지 않았어요."}</p></div>
+      <button type="button" class="d-open" data-open-day="${iso}">그날 묵상 열기</button>`;
     return;
   }
-  const { m,d,dow } = parseISO(iso);
-  const ref = formatEntryRefs(e) || "";
-  const ps = entryPassages(e);
-  const verseHtml = ps.map(p => {
-    const first = p.verses[0];
-    const text = verseText("krv", p.book, p.chapter, first) || verseText("kjv", p.book, p.chapter, first) || "";
-    return `<p class="d-ref">${esc(formatPassageRef(p))}</p>${text?`<p class="d-verse">${esc(text)}</p>`:""}`;
+  if (wrap) wrap.classList.remove("cal-only");
+  const dates = collectMonthEntries();
+  const label = collectFieldLabel(collectFilter);
+  const items = dates.map(iso => {
+    const e = getEntry(iso);
+    const refs = formatEntryRefs(e) || "본문 없음";
+    let body = "";
+    if (collectFilter === "ref") {
+      body = `<p class="d-ref">${esc(refs)}</p>`;
+    } else {
+      const text = snippetOf(e, collectFilter);
+      body = `<p class="d-ref">${esc(refs)}</p><p class="d-text${text?"":" empty"}">${esc(text) || "아직 적지 않았어요."}</p>`;
+    }
+    return `<div class="collect-item" data-iso="${iso}">
+      <p class="d-date">${collectDateLabel(iso)}</p>
+      ${body}
+      <button type="button" class="d-open" data-open-day="${iso}">그날 묵상 열기</button>
+    </div>`;
   }).join("");
-  box.className = "collect-detail";
-  box.innerHTML = `
-    <div class="d-head"><p class="d-date">${m}월 ${d}일 <em style="font-style:normal;font-size:15px;color:#5a4e40">${DOW[dow]}요일</em></p></div>
-    <div class="d-sec"><p class="sec-label">본문</p>${verseHtml || `<p class="d-ref">본문 없음</p>`}</div>
-    <div class="d-sec"><p class="sec-label">느낀 점</p><p class="d-body">${esc((e.feeling||"").trim()) || "아직 적지 않았어요."}</p></div>
-    <div class="d-sec"><p class="sec-label">적용점</p><p class="d-body">${esc((e.apply||"").trim()) || "아직 적지 않았어요."}</p></div>
-    <div class="d-sec"><p class="sec-label">기도</p><p class="d-body">${esc((e.prayer||"").trim()) || "아직 적지 않았어요."}</p></div>
-    <button type="button" class="d-open" id="openDayBtn">그날 묵상 열기</button>`;
+  box.className = "collect-detail collect-list";
+  box.innerHTML = items || `<p class="d-body">이번 달에 기록이 없어요.</p>`;
 }
 
 /* ===== prayers / verses / bible / search ===== */
@@ -2199,15 +2286,21 @@ function renderPicker() {
     const on = picker.verses.includes(v);
     return `<button type="button" class="chip${on?" on":""}" data-vs="${v}">${v}</button>`;
   }).join("");
+  const allOn = nums.length && nums.every(v => picker.verses.includes(v));
+  const allBtn = $(isMobile() ? "pickAllM" : "pickAll");
+  if (allBtn) allBtn.classList.toggle("on", !!allOn);
   const ref = picker.verses.length
     ? formatPassageRef({ book:picker.book, chapter:picker.chapter, verses:picker.verses })
     : "구절을 골라 주세요";
   $(ids.range).textContent = ref;
   const first = picker.verses[0];
   const ko1 = first ? verseText("krv", picker.book, picker.chapter, first) : "";
+  const hint = isMobile()
+    ? "장을 고른 뒤 구절을 누르거나, 손가락으로 밀어서 여러 구절을 고를 수 있어요."
+    : "장을 고른 뒤 구절을 눌러 주세요. Shift+클릭하면 사이 구절이 함께 골라져요.";
   $(ids.prev).innerHTML = picker.verses.length
     ? `<b>${esc(ref)}</b><div>${esc(ko1 || "")}</div>`
-    : `<span style="color:#6b5c4c">장을 고른 뒤 구절을 눌러 주세요. Shift+클릭하면 사이 구절이 함께 골라져요.</span>`;
+    : `<span style="color:#6b5c4c">${hint}</span>`;
   const onBtn = $(ids.books).querySelector(".chip.on");
   if (onBtn) onBtn.scrollIntoView({block:"nearest"});
 }
@@ -2238,6 +2331,7 @@ function tabKey(name) {
 function setView(name) {
   if (name !== "search") closeSearchMode(false);
   if (name === "today-cal") name = "today";
+  if (name === "collect") collectSel = null;
   view = name;
   document.body.dataset.view = name === "read" ? "bible" : name;
   if (name === "read") document.body.dataset.view = "bible";
@@ -2328,7 +2422,6 @@ async function renderDayView() {
     <p class="sec-label"><span class="sec-n">${n}.</span> ${label}</p>
     <div class="ruled ${text && text.length>40?"md":"sm"}">${text ? esc(text) : "<span style=\"color:#6b5c4c\">아직 적지 않았어요.</span>"}</div>
   </section>`;
-  const thanks = (e.thanks || ["","",""]);
   box.innerHTML = `
     <div class="day-tools"><span class="day-mood">오늘 마음 · ${esc(e.mood || "맑음")}</span>
       <button type="button" class="btn-write ghost" id="btnEditThis">이 날 묵상 고치기</button>
@@ -2346,11 +2439,7 @@ async function renderDayView() {
     ${field("3","하나님은 어떤 분이신가", (e.whoGod||"").trim())}
     ${field("4","느낀 점", (e.feeling||"").trim())}
     ${field("5","적용점", (e.apply||"").trim())}
-    <section>
-      <p class="sec-label"><span class="sec-n">6.</span> 감사 세가지</p>
-      <div class="thanks">${[0,1,2].map(i => `<div class="t-row"><span class="n">${i+1}</span><div class="line">${thanks[i] ? esc(thanks[i]) : "<span style=\"color:#6b5c4c\"> </span>"}</div></div>`).join("")}</div>
-    </section>
-    ${field("7","기도", (e.prayer||"").trim())}
+    ${field("6","기도", (e.prayer||"").trim())}
   `;
 }
 function askDeleteConfirm() {
@@ -2449,15 +2538,17 @@ $("colPrev").onclick = () => { colMonth--; if (colMonth<1){colMonth=12;colYear--
 $("colNext").onclick = () => { colMonth++; if (colMonth>12){colMonth=1;colYear++;} renderCollect(); };
 $("colToday").onclick = () => {
   const t = parseISO(todayISO());
-  colYear=t.y; colMonth=t.m; collectSel=todayISO(); renderCollect();
+  colYear=t.y; colMonth=t.m;
+  if (collectFilter === "all") collectSel = null;
+  renderCollect();
 };
 qsa("#moodRow [data-mood]").forEach(b => b.addEventListener("click", () => {
   qsa("#moodRow [data-mood]").forEach(x => x.classList.remove("on"));
   b.classList.add("on");
   autosaveToday();
 }));
-["f-summary","f-notes","f-whoGod","f-feeling","f-apply","f-prayer","f-thanks0","f-thanks1","f-thanks2"].forEach(id => {
-  $(id).addEventListener("input", autosaveToday);
+["f-summary","f-notes","f-whoGod","f-feeling","f-apply","f-prayer"].forEach(id => {
+  $(id).addEventListener("input", () => { autosaveToday(); scheduleSaveConfirm(); });
 });
 $("chipKrv").onclick = () => {
   const e = gatherTodayForm();
@@ -2497,6 +2588,82 @@ $("pickLayer").addEventListener("click", ev => { if (ev.target.id === "pickLayer
 $("sheetLayer").addEventListener("click", ev => { if (ev.target.id === "sheetLayer") closePicker(); });
 $("pickGo").onclick = applyPicker;
 $("pickGoM").onclick = applyPicker;
+function toggleAllPickerVerses() {
+  const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+  const allOn = nums.length && nums.every(v => picker.verses.includes(v));
+  picker.verses = allOn ? [] : [...nums];
+  picker.anchor = picker.verses.length ? picker.verses[0] : null;
+  renderPicker();
+}
+$("pickAll").onclick = ev => { ev.preventDefault(); ev.stopPropagation(); toggleAllPickerVerses(); };
+$("pickAllM").onclick = ev => { ev.preventDefault(); ev.stopPropagation(); toggleAllPickerVerses(); };
+
+function pickerVerseFromPoint(x, y) {
+  const el = document.elementFromPoint(x, y);
+  const btn = el && el.closest && el.closest("[data-vs]");
+  return btn ? +btn.dataset.vs : null;
+}
+function refreshPickerVerseUI() {
+  const id = isMobile() ? "pickVsM" : "pickVs";
+  qsa("#"+id+" [data-vs]").forEach(btn => btn.classList.toggle("on", picker.verses.includes(+btn.dataset.vs)));
+  const ids = isMobile() ? { prev:"pickPreviewM", range:"pickRangeM" } : { prev:"pickPreview", range:"pickRange" };
+  const ref = picker.verses.length
+    ? formatPassageRef({ book:picker.book, chapter:picker.chapter, verses:picker.verses })
+    : "구절을 골라 주세요";
+  if ($(ids.range)) $(ids.range).textContent = ref;
+  const first = picker.verses[0];
+  const ko1 = first ? verseText("krv", picker.book, picker.chapter, first) : "";
+  if ($(ids.prev) && picker.verses.length) $(ids.prev).innerHTML = `<b>${esc(ref)}</b><div>${esc(ko1 || "")}</div>`;
+  const allBtn = $(isMobile() ? "pickAllM" : "pickAll");
+  const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+  if (allBtn) allBtn.classList.toggle("on", nums.length && nums.every(v => picker.verses.includes(v)));
+}
+let pickDrag = null;
+function onPickPointerDown(ev) {
+  if (ev.pointerType !== "touch") return;
+  const vs = ev.target.closest("[data-vs]");
+  if (!vs) return;
+  pickDrag = { start:+vs.dataset.vs, moved:false, id:ev.pointerId, target:vs };
+}
+function onPickPointerMove(ev) {
+  if (!pickDrag || ev.pointerId !== pickDrag.id) return;
+  const v = pickerVerseFromPoint(ev.clientX, ev.clientY);
+  if (v == null) return;
+  if (v !== pickDrag.start || pickDrag.moved) {
+    if (!pickDrag.moved) {
+      pickDrag.moved = true;
+      try { pickDrag.target.setPointerCapture(ev.pointerId); } catch (ex) {}
+    }
+    ev.preventDefault();
+    const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+    const a = Math.min(pickDrag.start, v), b = Math.max(pickDrag.start, v);
+    picker.verses = nums.filter(n => n>=a && n<=b);
+    picker.anchor = pickDrag.start;
+    refreshPickerVerseUI();
+  }
+}
+function onPickPointerUp(ev) {
+  if (!pickDrag || ev.pointerId !== pickDrag.id) return;
+  const dragged = pickDrag.moved;
+  const start = pickDrag.start;
+  pickDrag = null;
+  picker._ignoreUntil = Date.now() + 400;
+  if (!dragged) {
+    const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
+    const set = new Set(picker.verses);
+    if (set.has(start)) set.delete(start); else set.add(start);
+    picker.verses = [...set].sort((a,b)=>a-b);
+    picker.anchor = start;
+  }
+  renderPicker();
+}
+["pickVs","pickVsM"].forEach(id => {
+  const el = $(id);
+  el.addEventListener("pointerdown", onPickPointerDown);
+  el.addEventListener("pointermove", onPickPointerMove, { passive:false });
+  el.addEventListener("pointerup", onPickPointerUp);
+  el.addEventListener("pointercancel", onPickPointerUp);
+});
 function onPickClick(ev) {
   const book = ev.target.closest("[data-book]");
   const ch = ev.target.closest("[data-ch]");
@@ -2515,6 +2682,7 @@ function onPickClick(ev) {
     renderPicker(); return;
   }
   if (vs) {
+    if (picker._ignoreUntil && Date.now() < picker._ignoreUntil) return;
     const v = +vs.dataset.vs;
     const nums = chapterVerseNums(picker.book, picker.chapter, "krv");
     if (ev.shiftKey && picker.anchor != null) {
@@ -2535,16 +2703,9 @@ $("sheetLayer").addEventListener("click", onPickClick);
 
 $("highlightBox").addEventListener("click", onVerseClick);
 function onVerseClick(ev) {
-  const star = ev.target.closest("[data-star]");
+  if (ev.target.closest("[data-del],[data-edit]")) return;
   const pv = ev.target.closest(".pv");
   const e = currentEntry();
-  if (star) {
-    ev.stopPropagation();
-    const book = +(star.dataset.book || e.book);
-    const ch = +(star.dataset.chapter || e.chapter);
-    toggleStar(book, ch, +star.dataset.star);
-    return;
-  }
   if (pv && pv.dataset.verse) {
     const book = +(pv.dataset.book || e.book);
     const ch = +(pv.dataset.chapter || e.chapter);
@@ -2553,7 +2714,7 @@ function onVerseClick(ev) {
     const i = hs.findIndex(h => h.book===book && h.chapter===ch && h.verse===verse);
     if (i >= 0) hs.splice(i, 1);
     else hs.push({ book, chapter: ch, verse });
-    e.highlights = hs;
+    e.highlights = sortHighlights(hs, e);
     putEntry(currentDate, e);
     renderPassage();
   }
@@ -2566,18 +2727,35 @@ $("calGrid").addEventListener("click", ev => {
 $("colGrid").addEventListener("click", ev => {
   const day = ev.target.closest("[data-iso]");
   if (!day || !day.dataset.iso) return;
-  collectSel = day.dataset.iso;
+  const iso = day.dataset.iso;
+  if (collectFilter === "all") {
+    collectSel = (collectSel === iso) ? null : iso;
+  } else {
+    collectSel = iso;
+  }
   renderCollect();
+  if (collectFilter !== "all" && collectSel) {
+    const item = document.querySelector(`#colDetail .collect-item[data-iso="${collectSel}"]`);
+    if (item) item.scrollIntoView({ block:"nearest" });
+  }
 });
 $("colFilters").addEventListener("click", ev => {
   const chip = ev.target.closest("[data-filter]");
   if (!chip) return;
-  collectFilter = chip.dataset.filter;
-  qsa("#colFilters .tchip").forEach(c => c.classList.toggle("on", c===chip));
+  const next = chip.dataset.filter;
+  if (next === "all" && collectFilter === "all" && collectSel) {
+    collectSel = null;
+  } else {
+    collectFilter = next;
+    if (collectFilter !== "all") collectSel = null;
+  }
+  qsa("#colFilters .tchip").forEach(c => c.classList.toggle("on", c.dataset.filter === collectFilter));
   renderCollect();
 });
 $("colDetail").addEventListener("click", ev => {
-  if (ev.target.id === "openDayBtn" && collectSel) goToDate(collectSel);
+  const openBtn = ev.target.closest("[data-open-day]");
+  if (openBtn && openBtn.dataset.openDay) { openDay(openBtn.dataset.openDay); return; }
+  if (ev.target.id === "openDayBtn" && collectSel) { openDay(collectSel); return; }
 });
 
 $("prayAdd").onclick = addPrayer;
@@ -2690,6 +2868,11 @@ window.__dailybread = {
   verseText, openPicker, migrateEntry, entryPassages, entryHighlights, getEntry,
   requestDeleteEntry, deleteEntry, askDeleteConfirm,
   renderPrayers, setPrayerAnswered, markPrayerAnswered, toast, hideToast,
+  sortHighlights, toggleAllPickerVerses, scheduleSaveConfirm, renderCollect,
+  get collectFilter() { return collectFilter; },
+  set collectFilter(v) { collectFilter = v; },
+  get collectSel() { return collectSel; },
+  set collectSel(v) { collectSel = v; },
   verseFromDeletedEntry, entryVerseKeys,
   get pendingDeletes() { return pendingDeletes; },
   get pendingRemovedVerseIds() { return pendingRemovedVerseIds; },
