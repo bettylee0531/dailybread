@@ -814,6 +814,33 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
 .day-read .stack{max-width:880px}
 .day-tools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 8px}
 .day-mood{font-size:14px;color:#5a4e40}
+.edit-actions{padding:0 8px 10px 8px}
+.btn-write.danger{
+  background:rgba(160,86,69,.1);color:#7a3a2e;border-color:#c4a090;
+  -webkit-text-stroke:0;
+}
+.btn-write.danger:hover{background:rgba(160,86,69,.18)}
+.btn-write.danger:not(.ghost){
+  background:#7a3a2e;color:#f7f4ec;border-color:#7a3a2e;
+}
+.confirm-layer{
+  display:none;position:fixed;inset:0;z-index:50;
+  background:rgba(70,50,25,.28);
+  align-items:center;justify-content:center;padding:24px;
+}
+.confirm-layer:not([hidden]){display:flex}
+.confirm-card{
+  background:var(--paper-on) var(--paper-img) center/800px;
+  border:1px solid var(--paper-border);border-radius:12px;
+  box-shadow:0 14px 32px rgba(70,50,25,.22);
+  padding:22px 22px 18px;max-width:360px;width:100%;
+}
+.confirm-title{margin:0 0 8px;font-size:20px;color:#3a3026}
+.confirm-body{margin:0 0 18px;font-size:16px;color:#5a4e40;line-height:1.5}
+.confirm-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+@media(max-width:700px){
+  .day-tools .btn-write, .edit-actions .btn-write, .confirm-actions .btn-write{width:auto}
+}
 .day-empty{padding:36px 12px 16px;text-align:center}
 .day-empty p{margin:0 0 16px;font-size:17px;color:#6b5c4c}
 @media(max-width:700px){
@@ -884,6 +911,9 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
             <span class="dots" id="streakDots"></span>
           </div>
         </div>
+        <div class="edit-actions" id="editActions" hidden>
+          <button type="button" class="btn-write ghost danger" id="btnDeleteEdit">이 날 묵상 지우기</button>
+        </div>
         <div class="stack">
           <section>
             <div class="ref-tools">
@@ -950,7 +980,6 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
         </div>
         <div class="today-actions">
           <button type="button" class="btn-write" id="btnWriteToday">오늘 묵상 기록하기</button>
-          <span class="ex" id="calExampleBadge">예시</span>
         </div>
         <div class="month-cal" id="calGrid"></div>
         <p class="cal-note">기록이 있는 날을 누르면 그날 묵상이 열려요. 아직 없는 날을 누르면 그날을 새로 적을 수 있어요.</p>
@@ -964,7 +993,6 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
             <button class="nav-btn" type="button" id="readPrev" aria-label="이전 날">‹</button>
             <div class="date-label" id="readLabel">—</div>
             <button class="nav-btn" type="button" id="readNext" aria-label="다음 날">›</button>
-            <span class="ex" id="readExampleBadge">예시</span>
           </div>
         </div>
         <div class="stack day-read" id="readBody"></div>
@@ -1099,6 +1127,17 @@ textarea::placeholder, input.line::placeholder, .add-bar input::placeholder{colo
   </div>
 </div>
 <div class="toast" id="toast" role="status"></div>
+
+<div class="confirm-layer" id="confirmLayer" hidden>
+  <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <p class="confirm-title" id="confirmTitle">이 날 묵상을 지울까요?</p>
+    <p class="confirm-body" id="confirmBody">이 날 모은 구절도 함께 지워지고, 되돌릴 수 없어요.</p>
+    <div class="confirm-actions">
+      <button type="button" class="btn-write ghost" id="confirmNo">취소</button>
+      <button type="button" class="btn-write danger" id="confirmYes">지우기</button>
+    </div>
+  </div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/13.2.0/firebase-app.js";
@@ -1329,6 +1368,9 @@ let calYear, calMonth, colYear, colMonth;
 let collectFilter = "all";
 let collectSel = null;
 let bibleSeg = "books";
+let pendingDeletes = new Set();
+let pendingRemovedVerseIds = new Set();
+let suppressSave = false;
 let data = loadLocal();
 let currentUser = null;
 let applyingCloud = false;
@@ -1341,25 +1383,35 @@ function loadLocal() {
   try {
     const raw = JSON.parse(localStorage.getItem(LS_KEY) || "null");
     if (!raw || typeof raw !== "object") return emptyData();
+    pendingDeletes = new Set(Array.isArray(raw.pendingDeletes) ? raw.pendingDeletes : []);
+    pendingRemovedVerseIds = new Set(Array.isArray(raw.pendingRemovedVerseIds) ? raw.pendingRemovedVerseIds : []);
+    const entries = raw.entries || {};
+    pendingDeletes.forEach(iso => { delete entries[iso]; });
+    const verses = (Array.isArray(raw.verses) ? raw.verses : []).filter(v => !v || !pendingRemovedVerseIds.has(v.id));
     return {
-      entries: raw.entries || {},
+      entries,
       prayers: Array.isArray(raw.prayers) ? raw.prayers : [],
-      verses: Array.isArray(raw.verses) ? raw.verses : [],
+      verses,
       reading: raw.reading && typeof raw.reading === "object" ? raw.reading : {}
     };
   } catch (e) { return emptyData(); }
 }
 function saveLocal() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {}
+  try {
+    const payload = { ...data, pendingDeletes: [...pendingDeletes], pendingRemovedVerseIds: [...pendingRemovedVerseIds] };
+    localStorage.setItem(LS_KEY, JSON.stringify(payload));
+  } catch (e) {}
 }
 function getEntry(iso) {
   return data.entries[iso] ? migrateEntry(data.entries[iso]) : emptyEntry();
 }
 function putEntry(iso, entry) {
+  if (suppressSave) return;
   const e = migrateEntry(entry);
   if (!entryHasContent(e)) {
     delete data.entries[iso];
   } else {
+    pendingDeletes.delete(iso);
     e.updatedAt = new Date().toISOString();
     data.entries[iso] = e;
   }
@@ -1409,9 +1461,16 @@ async function flushCloud() {
   if (!fbReady || !currentUser || applyingCloud) return;
   const uid = currentUser.uid;
   try {
+    const stamped = new Date().toISOString();
+    for (const iso of [...pendingDeletes]) {
+      await setDoc(entryRef(uid, iso), { deleted: true, updatedAt: stamped });
+    }
+    pendingDeletes.clear();
+    pendingRemovedVerseIds.clear();
+    saveLocal();
     const e = getEntry(currentDate);
     if (entryHasContent(e)) await setDoc(entryRef(uid, currentDate), e);
-    else await setDoc(entryRef(uid, currentDate), { deleted: true, updatedAt: new Date().toISOString() });
+    else await setDoc(entryRef(uid, currentDate), { deleted: true, updatedAt: stamped });
     await setDoc(metaRef(uid), {
       prayers: data.prayers,
       verses: data.verses,
@@ -1428,7 +1487,12 @@ async function flushCloud() {
 function mergeData(local, cloudEntries, cloudMeta) {
   const out = emptyData();
   const dates = new Set([...Object.keys(local.entries||{}), ...Object.keys(cloudEntries||{})]);
+  const deleted = new Set([...pendingDeletes, ...(local.pendingDeletes || [])]);
   dates.forEach(d => {
+    if (deleted.has(d)) {
+      pendingDeletes.add(d);
+      return;
+    }
     const a = local.entries[d], b = cloudEntries[d];
     if (b && b.deleted && (!a || !a.updatedAt || (b.updatedAt||"") >= (a.updatedAt||""))) return;
     if (a && b) out.entries[d] = ((a.updatedAt||"") >= (b.updatedAt||"")) ? a : b;
@@ -1443,8 +1507,9 @@ function mergeData(local, cloudEntries, cloudMeta) {
   });
   out.prayers = [...byId.values()].sort((a,b) => (a.createdAt||"").localeCompare(b.createdAt||""));
   const vId = new Map();
+  const skipVerse = new Set([...pendingRemovedVerseIds, ...(local.pendingRemovedVerseIds || [])]);
   [...(cloudMeta.verses||[]), ...(local.verses||[])].forEach(v => {
-    if (!v || !v.id) return;
+    if (!v || !v.id || skipVerse.has(v.id)) return;
     vId.set(v.id, v);
   });
   out.verses = [...vId.values()];
@@ -1583,6 +1648,8 @@ function fillTodayForm() {
   $("f-apply").value = e.apply || "";
   $("f-prayer").value = e.prayer || "";
   for (let i=0;i<3;i++) $("f-thanks"+i).value = (e.thanks && e.thanks[i]) || "";
+  const has = entryHasContent(e);
+  $("editActions").hidden = !has;
   renderStreak();
   renderPassage();
 }
@@ -1601,6 +1668,7 @@ function gatherTodayForm() {
   return e;
 }
 function autosaveToday() {
+  if (suppressSave || view !== "today-edit") return;
   const e = gatherTodayForm();
   putEntry(currentDate, e);
   $("saveDot").textContent = "저장됨";
@@ -1710,7 +1778,10 @@ function toggleStar(nr,ch,v){
       id: uidId(), book: nr, chapter: ch, verse: v,
       textKrv: verseText("krv", nr, ch, v) || "",
       textKjv: verseText("kjv", nr, ch, v) || "",
-      date: currentDate, addedAt: new Date().toISOString()
+      date: currentDate,
+      source: "entry",
+      sourceDate: currentDate,
+      addedAt: new Date().toISOString()
     });
   }
   saveLocal(); scheduleCloud();
@@ -2096,15 +2167,19 @@ function render() {
   if (view === "bible" || view === "read") renderBible();
   if (view === "search") renderSearch($("searchBox").value);
 }
+function maybeSaveEditor() {
+  if (suppressSave || view !== "today-edit") return;
+  putEntry(currentDate, gatherTodayForm());
+}
 function setCurrentDate(iso) {
-  if (view === "today-edit") putEntry(currentDate, gatherTodayForm());
+  maybeSaveEditor();
   currentDate = iso;
   const { y,m } = parseISO(iso);
   calYear = colYear = y; calMonth = colMonth = m;
   collectSel = iso;
 }
 function showCalendar() {
-  if (view === "today-edit") putEntry(currentDate, gatherTodayForm());
+  maybeSaveEditor();
   setView("today");
 }
 function openDay(iso) {
@@ -2167,7 +2242,8 @@ async function renderDayView() {
   const thanks = (e.thanks || ["","",""]);
   box.innerHTML = `
     <div class="day-tools"><span class="day-mood">오늘 마음 · ${esc(e.mood || "맑음")}</span>
-      <button type="button" class="btn-write ghost" id="btnEditThis">이 날 묵상 고치기</button></div>
+      <button type="button" class="btn-write ghost" id="btnEditThis">이 날 묵상 고치기</button>
+      <button type="button" class="btn-write ghost danger" id="btnDeleteThis">이 날 묵상 지우기</button></div>
     <section>
       <p class="sec-label">본문</p>
       ${passage || `<div class="d-ref" style="font-size:18px;margin:0 0 6px">본문 없음</div>`}
@@ -2187,6 +2263,65 @@ async function renderDayView() {
     </section>
     ${field("7","기도", (e.prayer||"").trim())}
   `;
+}
+function askDeleteConfirm() {
+  return new Promise(resolve => {
+    $("confirmTitle").textContent = "이 날 묵상을 지울까요?";
+    $("confirmBody").textContent = "이 날 모은 구절도 함께 지워지고, 되돌릴 수 없어요.";
+    $("confirmLayer").hidden = false;
+    const finish = (ok) => {
+      $("confirmYes").onclick = null;
+      $("confirmNo").onclick = null;
+      $("confirmLayer").onclick = null;
+      $("confirmLayer").hidden = true;
+      resolve(ok);
+    };
+    $("confirmYes").onclick = () => finish(true);
+    $("confirmNo").onclick = () => finish(false);
+    $("confirmLayer").onclick = ev => { if (ev.target.id === "confirmLayer") finish(false); };
+  });
+}
+async function requestDeleteEntry(iso) {
+  const target = iso || currentDate;
+  if (!entryHasContent(getEntry(target))) return false;
+  const ok = await askDeleteConfirm();
+  if (!ok) return false;
+  deleteEntry(target);
+  return true;
+}
+function entryVerseKeys(e) {
+  const keys = new Set();
+  entryPassages(e).forEach(p => (p.verses||[]).forEach(v => keys.add(`${p.book}:${p.chapter}:${v}`)));
+  entryHighlights(e).forEach(h => keys.add(`${h.book}:${h.chapter}:${h.verse}`));
+  return keys;
+}
+function verseFromDeletedEntry(v, iso, keys) {
+  if (!v) return false;
+  if (v.source === "bible") return false;
+  if (v.sourceDate === iso || v.entryDate === iso) return true;
+  const key = `${v.book}:${v.chapter}:${v.verse}`;
+  // older items only have date: drop if that date matches and the verse was in the day's 본문 or 마음에 남는 구절
+  if (v.date === iso && keys.has(key)) return true;
+  return false;
+}
+function deleteEntry(iso) {
+  suppressSave = true;
+  clearTimeout(autosaveToday._t);
+  const keys = entryVerseKeys(getEntry(iso));
+  const kept = [];
+  data.verses.forEach(v => {
+    if (verseFromDeletedEntry(v, iso, keys)) {
+      if (v.id) pendingRemovedVerseIds.add(v.id);
+    } else kept.push(v);
+  });
+  data.verses = kept;
+  delete data.entries[iso];
+  pendingDeletes.add(iso);
+  saveLocal();
+  scheduleCloud();
+  toast("묵상을 지웠어요.");
+  showCalendar();
+  suppressSave = false;
 }
 function closeSearchMode(reset) {
   $("searchBox").classList.remove("open");
@@ -2218,7 +2353,9 @@ $("calPrev").onclick = () => { calMonth--; if (calMonth<1){calMonth=12;calYear--
 $("calNext").onclick = () => { calMonth++; if (calMonth>12){calMonth=1;calYear++;} renderCalendar(); };
 $("readBody").addEventListener("click", ev => {
   if (ev.target.id === "btnWriteThis" || ev.target.id === "btnEditThis") openEditor(currentDate);
+  if (ev.target.id === "btnDeleteThis") requestDeleteEntry(currentDate);
 });
+$("btnDeleteEdit").onclick = () => requestDeleteEntry(currentDate);
 $("colPrev").onclick = () => { colMonth--; if (colMonth<1){colMonth=12;colYear--;} renderCollect(); };
 $("colNext").onclick = () => { colMonth++; if (colMonth>12){colMonth=1;colYear++;} renderCollect(); };
 $("colToday").onclick = () => {
@@ -2458,6 +2595,10 @@ window.__dailybread = {
   },
   loadBible, flushCloud, saveLocal, autosaveToday, formatRef, formatPassageRef, formatEntryRefs,
   verseText, openPicker, migrateEntry, entryPassages, entryHighlights, getEntry,
+  requestDeleteEntry, deleteEntry, askDeleteConfirm,
+  verseFromDeletedEntry, entryVerseKeys,
+  get pendingDeletes() { return pendingDeletes; },
+  get pendingRemovedVerseIds() { return pendingRemovedVerseIds; },
   toast
 };
 
