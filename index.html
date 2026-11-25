@@ -1270,13 +1270,17 @@ function emptyEntry() {
 }
 function emptyData() { return { entries: {}, prayers: [], verses: [], reading: {} }; }
 
-function entryHasContent(e) {
+function entryHasUserText(e) {
   if (!e) return false;
-  if (entryPassages(e).length || e.book) return true;
   if ((e.summary||"").trim() || (e.notes||"").trim() || (e.whoGod||"").trim() ||
       (e.feeling||"").trim() || (e.apply||"").trim() || (e.prayer||"").trim()) return true;
   if ((e.thanks||[]).some(t => (t||"").trim())) return true;
   return false;
+}
+function entryHasContent(e) {
+  if (!e) return false;
+  if (entryPassages(e).length || e.book) return true;
+  return entryHasUserText(e);
 }
 
 /* ===== bible ===== */
@@ -1436,6 +1440,8 @@ let bibleSeg = "books";
 let pendingDeletes = new Set();
 let pendingRemovedVerseIds = new Set();
 let suppressSave = false;
+let formHydrating = false;
+let editorHydrated = false;
 let data = loadLocal();
 let currentUser = null;
 let applyingCloud = false;
@@ -1473,13 +1479,30 @@ function getEntry(iso) {
 function putEntry(iso, entry) {
   if (suppressSave) return;
   const e = migrateEntry(entry);
+  const prev = data.entries[iso] ? migrateEntry(data.entries[iso]) : null;
   if (!entryHasContent(e)) {
-    delete data.entries[iso];
-  } else {
-    pendingDeletes.delete(iso);
-    e.updatedAt = new Date().toISOString();
-    data.entries[iso] = e;
+    // Never blank or delete a saved entry just because the form looks empty.
+    // Explicit deleteEntry() is the only removal path.
+    return;
   }
+  // thanks is not in the v8 form, so "empty form" means the visible writing fields only.
+  const incomingBlank = !((e.summary||"").trim() || (e.notes||"").trim() || (e.whoGod||"").trim() ||
+      (e.feeling||"").trim() || (e.apply||"").trim() || (e.prayer||"").trim());
+  const prevHasWriting = !!(prev && ((prev.summary||"").trim() || (prev.notes||"").trim() || (prev.whoGod||"").trim() ||
+      (prev.feeling||"").trim() || (prev.apply||"").trim() || (prev.prayer||"").trim()));
+  if (prevHasWriting && incomingBlank) {
+    // Keep existing writing if an empty form would have wiped it.
+    e.summary = prev.summary;
+    e.notes = prev.notes;
+    e.whoGod = prev.whoGod;
+    e.feeling = prev.feeling;
+    e.apply = prev.apply;
+    e.prayer = prev.prayer;
+    e.thanks = [...(prev.thanks || ["","",""])];
+  }
+  pendingDeletes.delete(iso);
+  e.updatedAt = new Date().toISOString();
+  data.entries[iso] = e;
   saveLocal();
   scheduleCloud();
 }
@@ -1533,9 +1556,10 @@ async function flushCloud() {
     pendingDeletes.clear();
     pendingRemovedVerseIds.clear();
     saveLocal();
-    const e = getEntry(currentDate);
-    if (entryHasContent(e)) await setDoc(entryRef(uid, currentDate), e);
-    else await setDoc(entryRef(uid, currentDate), { deleted: true, updatedAt: stamped });
+    for (const iso of Object.keys(data.entries || {})) {
+      const e = migrateEntry(data.entries[iso]);
+      if (entryHasContent(e)) await setDoc(entryRef(uid, iso), e);
+    }
     await setDoc(metaRef(uid), {
       prayers: data.prayers,
       verses: data.verses,
@@ -1592,8 +1616,7 @@ function listenCloud(uid) {
   const cloudEntries = {};
   let meta = { prayers:[], verses:[], reading:{} };
   const apply = () => {
-    const active = document.activeElement;
-    const editing = dirty || (active && String(active.id||"").startsWith("f-"));
+    const editing = view === "today-edit" && editorHydrated && !formHydrating;
     const keepDate = currentDate;
     const keepEntry = editing ? gatherTodayForm() : null;
     applyingCloud = true;
@@ -1727,6 +1750,8 @@ function streakInfo() {
 function currentEntry() { return getEntry(currentDate); }
 
 function fillTodayForm() {
+  formHydrating = true;
+  editorHydrated = false;
   const e = currentEntry();
   $("todayLabel").innerHTML = dateLabel(currentDate);
   qsa("#moodRow [data-mood]").forEach(b => b.classList.toggle("on", b.dataset.mood === (e.mood || "맑음")));
@@ -1742,6 +1767,8 @@ function fillTodayForm() {
   $("editActions").hidden = !has;
   renderStreak();
   renderPassage();
+  editorHydrated = true;
+  formHydrating = false;
 }
 function gatherTodayForm() {
   const e = currentEntry();
@@ -1756,8 +1783,11 @@ function gatherTodayForm() {
   e.prayer = $("f-prayer").value;
   return e;
 }
+function editorCanSave() {
+  return !suppressSave && !formHydrating && editorHydrated && view === "today-edit";
+}
 function autosaveToday() {
-  if (suppressSave || view !== "today-edit") return;
+  if (!editorCanSave()) return;
   const e = gatherTodayForm();
   putEntry(currentDate, e);
   $("saveDot").textContent = "저장됨";
@@ -1768,7 +1798,7 @@ function autosaveToday() {
 function scheduleSaveConfirm() {
   clearTimeout(scheduleSaveConfirm._t);
   scheduleSaveConfirm._t = setTimeout(() => {
-    if (suppressSave || view !== "today-edit") return;
+    if (!editorCanSave()) return;
     autosaveToday();
     toast("저장되었습니다", 1500);
   }, 1500);
@@ -2332,6 +2362,11 @@ function setView(name) {
   if (name !== "search") closeSearchMode(false);
   if (name === "today-cal") name = "today";
   if (name === "collect") collectSel = null;
+  if (name !== "today-edit") {
+    editorHydrated = false;
+    formHydrating = false;
+    clearTimeout(scheduleSaveConfirm._t);
+  }
   view = name;
   document.body.dataset.view = name === "read" ? "bible" : name;
   if (name === "read") document.body.dataset.view = "bible";
@@ -2351,7 +2386,7 @@ function render() {
   if (view === "search") renderSearch($("searchBox").value);
 }
 function maybeSaveEditor() {
-  if (suppressSave || view !== "today-edit") return;
+  if (!editorCanSave()) return;
   putEntry(currentDate, gatherTodayForm());
 }
 function setCurrentDate(iso) {
@@ -2876,6 +2911,8 @@ window.__dailybread = {
   verseFromDeletedEntry, entryVerseKeys,
   get pendingDeletes() { return pendingDeletes; },
   get pendingRemovedVerseIds() { return pendingRemovedVerseIds; },
+  get editorHydrated() { return editorHydrated; },
+  putEntry, gatherTodayForm, fillTodayForm, maybeSaveEditor, editorCanSave,
   toast
 };
 
