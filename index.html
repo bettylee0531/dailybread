@@ -1382,7 +1382,10 @@ function entryPassages(e) {
 }
 function entryHighlights(e) {
   if (!e) return [];
-  if (Array.isArray(e.highlights) && e.highlights.length) {
+  // An explicit highlights array (including []) is the source of truth.
+  // Falling back to leftover e.highlight when the array is empty would
+  // make the last 마음에 남는 구절 impossible to deselect.
+  if (Array.isArray(e.highlights)) {
     return e.highlights.map(h => {
       if (typeof h === "number") {
         const p = entryPassages(e)[0];
@@ -1422,7 +1425,11 @@ function syncLegacyFields(e) {
   return e;
 }
 function migrateEntry(raw) {
-  const e = { ...emptyEntry(), ...(raw||{}), thanks: [...((raw && raw.thanks) || ["","",""])] };
+  const src = raw || {};
+  const e = { ...emptyEntry(), ...src, thanks: [...(src.thanks || ["","",""])] };
+  // emptyEntry() has highlights:[]. Don't let that hide a legacy `highlight`
+  // on old records that never had a highlights array.
+  if (!Object.prototype.hasOwnProperty.call(src, "highlights")) delete e.highlights;
   return syncLegacyFields(e);
 }
 
@@ -2750,6 +2757,7 @@ function onVerseClick(ev) {
     if (i >= 0) hs.splice(i, 1);
     else hs.push({ book, chapter: ch, verse });
     e.highlights = sortHighlights(hs, e);
+    e.highlight = e.highlights[0] ? e.highlights[0].verse : null;
     putEntry(currentDate, e);
     renderPassage();
   }
